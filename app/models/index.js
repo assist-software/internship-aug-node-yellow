@@ -32,6 +32,7 @@ db.eventInvite = require("./event-invite.model.js")(sequelize, Sequelize);
 db.eventRequest = require("./event-request.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.workout = require("./workout.model.js")(sequelize, Sequelize);
+db.eventMember = require("./event-member.model.js")(sequelize, Sequelize);
 
 
 

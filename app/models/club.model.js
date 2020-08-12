@@ -13,7 +13,8 @@ module.exports = (sequelize, Sequelize) => {
             references: {
                 model: User,
                 key: 'id'
-            }
+            },
+            allowNull:true
         }
     });
     return Club;
