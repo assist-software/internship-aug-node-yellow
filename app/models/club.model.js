@@ -1,6 +1,7 @@
 const { USER } = require("../config/db.config");
 
 module.exports = (sequelize, Sequelize) => {
+    const User = require("./user.model.js")(sequelize, Sequelize);
     const Club = sequelize.define("club", {
         name: {
             type: Sequelize.STRING,

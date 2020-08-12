@@ -1,4 +1,7 @@
+
+
 module.exports = (sequelize, Sequelize) => {
+    const Club = require("./club.model.js")(sequelize, Sequelize);
     const ClubInvite = sequelize.define("club_invite", {
         email: {
             type: Sequelize.STRING,

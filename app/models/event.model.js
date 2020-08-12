@@ -1,4 +1,6 @@
+
 module.exports = (sequelize, Sequelize) => {
+    const Club = require("./club.model.js")(sequelize, Sequelize);
     const Event = sequelize.define("event", {
         name: {
             type: Sequelize.STRING,
@@ -45,7 +47,5 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         }
     });
-    //Event.belongsTo(Club);
-    //Event.belongsTo(Sport);
     return Event;
 }
