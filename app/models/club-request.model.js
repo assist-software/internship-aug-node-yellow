@@ -1,7 +1,7 @@
-module.exports = (sequilize, Sequilize) => {
-    const ClubRequest = sequilize.define("club_request", { //cu _ sau fara?
+module.exports = (sequelize, Sequelize) => {
+    const ClubRequest = sequelize.define("club_request", { //cu _ sau fara?
         user_id: {
-          type: Sequilize.INTEGER,
+          type: Sequelize.INTEGER,
           references: {
               model: User,
               key: 'id'
@@ -9,7 +9,7 @@ module.exports = (sequilize, Sequilize) => {
           allowNull: false
         },
         club_id: {
-            type: Sequilize.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
                 model: Club,
                 key: 'id'

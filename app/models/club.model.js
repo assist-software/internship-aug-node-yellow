@@ -1,13 +1,13 @@
 const { USER } = require("../config/db.config");
 
-module.exports = (sequilize, Sequilize) => {
-    const Club = sequilize.define("club", {
+module.exports = (sequelize, Sequelize) => {
+    const Club = sequelize.define("club", {
         name: {
-            type: Sequilize.STRING,
+            type: Sequelize.STRING,
             allowNull: false
         },
         owner_id: {
-            type: Sequilize.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
                 model: User,
                 key: 'id'

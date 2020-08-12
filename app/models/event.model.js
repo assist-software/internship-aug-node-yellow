@@ -1,27 +1,27 @@
-module.exports = (sequilize, Sequilize) => {
-    const Event = sequilize.define("event", {
+module.exports = (sequelize, Sequelize) => {
+    const Event = sequelize.define("event", {
         name: {
-            type: Sequilize.STRING,
+            type: Sequelize.STRING,
             allowNull: false
         },
         date: {
-            type: Sequilize.DATE,
+            type: Sequelize.DATE,
             allowNull: false
         },
         time: {
-            type: Sequilize.TIME,
+            type: Sequelize.TIME,
             allowNull: false
         },
         description: {
-            type: Sequilize.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         },
         location: {
-            type: Sequilize.STRING,
+            type: Sequelize.STRING,
             allowNull: false
         },
         club_id: {
-            type: Sequilize.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
                 model: Club,
                 key: 'id'
@@ -29,11 +29,11 @@ module.exports = (sequilize, Sequilize) => {
             allowNull: false
         },
         radius: {
-            type: Sequilize.INTEGER,
+            type: Sequelize.INTEGER,
             allowNull: false
         },
         sport_type_id: {
-            type: Sequilize.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
                 model: Sport,
                 key: 'id'
@@ -41,7 +41,7 @@ module.exports = (sequilize, Sequilize) => {
             allowNull: false
         },
         event_cover: {
-            type: Sequilize.BLOB,
+            type: Sequelize.BLOB,
             allowNull: false
         }
     });
