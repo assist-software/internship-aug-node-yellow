@@ -2,9 +2,9 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 const User = require("./user.model.js")(sequelize, Sequelize);
-const Club = require("./club.model.js")(sequelize, Sequelize);
+const Event = require("./event.model.js")(sequelize, Sequelize);
 
-const ClubMember = sequelize.define('club_member', {
+const EventMember = sequelize.define('event_member', {
   // Model attributes are defined here
   
   user_id: {
@@ -16,12 +16,12 @@ const ClubMember = sequelize.define('club_member', {
         key:'id'
     }
   },
-  club_id: {
+  event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references:
     {
-      model: Club,
+      model: Event,
       key:'id'
     }
   }
@@ -29,4 +29,4 @@ const ClubMember = sequelize.define('club_member', {
 });
 
 // `sequelize.define` also returns the model
-console.log(ClubMember === sequelize.models.ClubMember); // true
+console.log(EventMember === sequelize.models.EventMember); // true

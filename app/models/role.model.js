@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-
+module.exports= (sequelize, Sequelize) => {
 const Role = sequelize.define('role', {
    
   name: {
@@ -12,7 +12,7 @@ const Role = sequelize.define('role', {
     allowNull: false
   }
 });
-module.exports= (sequelize, Sequelize) => {
+
 
   return Role
 }
