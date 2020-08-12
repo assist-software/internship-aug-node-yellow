@@ -11,11 +11,11 @@ const EventInvite = sequelize.define('event_invite', {
   event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references:
+    /*references:
     {
         model: Event,
         key:'id'
-    }
+    }*/
   }
 
 });

@@ -7,20 +7,20 @@ const ClubMember = sequelize.define('club_member', {
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references:
+   /* references:
     {
         model: User,
         key:'id'
-    }
+    }*/
   },
   club_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references:
+    /*references:
     {
       model: Event,
       key:'id'
-    }
+    }*/
   }
 
 });
