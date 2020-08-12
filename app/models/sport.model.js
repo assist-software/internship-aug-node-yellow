@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-
+module.exports= (sequelize, Sequelize) => {
 const Sport = sequelize.define('sport', {
   
     type: {
@@ -10,7 +10,7 @@ const Sport = sequelize.define('sport', {
     }
 });
 
-module.exports= (sequelize, Sequelize) => {
+
     return Sport
   }
 

@@ -27,7 +27,13 @@ db.clubInvite = require("./club-invite.model.js")(sequelize, Sequelize);
 db.clubRequest = require("./club-request.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.sport = require("./sport.model.js")(sequelize, Sequelize);
+db.role = require("./club-member.model.js")(sequelize, Sequelize);
+db.role = require("./event-invite.model.js")(sequelize, Sequelize);
+db.role = require("./event-request.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
+db.role = require("./workout.model.js")(sequelize, Sequelize);
+
+
 
 //db.workout = require("./workout.model.js")(sequelize, Sequelize);
 //db.club = require("./club.model.js")(sequelize, Sequelize);
