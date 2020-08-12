@@ -1,27 +1,28 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
-//const Role =require("./role.model.js");
+const User = require("./user.model.js")(sequelize, Sequelize);
+const Event = require("./event.model.js")(sequelize, Sequelize);
 const EventRequest = sequelize.define('event_request', {
   // Model attributes are defined here
   
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    /*references:
+    references:
     {
         model: User,
         key:'id'
-    }*/
+    }
   },
   event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-   /* references:
+    references:
     {
       model: Event,
       key:'id'
-    }*/
+    }
   }
 
 });
