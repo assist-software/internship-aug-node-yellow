@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-
+module.exports = (sequelize, Sequelize) => {
 const User = require("./user.model.js")(sequelize, Sequelize);
 const Event = require("./event.model.js")(sequelize, Sequelize);
 const EventRequest = sequelize.define('event_request', {
@@ -26,6 +26,5 @@ const EventRequest = sequelize.define('event_request', {
   }
 
 });
-
-// `sequelize.define` also returns the model
-console.log(EventRequest === sequelize.models.EventRequest); // true
+return EventRequest;
+}
