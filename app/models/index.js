@@ -21,18 +21,15 @@ db.sequelize = sequelize;
 
 // Define all models here like this:
 // db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
-<<<<<<< HEAD
 db.club = require("./club.model.js")(sequelize, Sequelize);
 db.event = require("./event.model.js")(sequelize, Sequelize);
 db.clubInvite = require("./club-invite.model.js")(sequelize, Sequelize);
 db.clubRequest = require("./club-request.model.js")(sequelize, Sequelize);
-=======
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.sport = require("./sport.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 
 //db.workout = require("./workout.model.js")(sequelize, Sequelize);
 //db.club = require("./club.model.js")(sequelize, Sequelize);
->>>>>>> 6913edc84d58de5be8f6d0d62a623691928c9f1c
 
 module.exports = db;
