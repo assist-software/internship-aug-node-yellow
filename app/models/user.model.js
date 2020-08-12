@@ -1,8 +1,11 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-const Role =require("./role.model.js");
-const Sport =require("./sport.model.js");
+
 module.exports=(sequelize,Sequelize)=>{
+
+    const Role =require("./role.model.js")(sequelize, Sequelize);
+    const Sport =require("./sport.model.js")(sequelize, Sequelize);
+
 const User = sequelize.define('user', {
     first_name: {
         type: DataTypes.STRING,
@@ -49,7 +52,7 @@ const User = sequelize.define('user', {
 
     },
     secondary_sport_id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
         references: {
             model: Sport,
@@ -76,4 +79,6 @@ const User = sequelize.define('user', {
 
     }
 });
+
+
 return User;}
