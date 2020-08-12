@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
+module.exports=(sequelize,Sequelize)=>{
 
+const Event =require("./event.model.js")(sequelize, Sequelize);
 const EventInvite = sequelize.define('event_invite', {
   // Model attributes are defined here
  
@@ -11,11 +13,11 @@ const EventInvite = sequelize.define('event_invite', {
   event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    /*references:
+    references:
     {
         model: Event,
         key:'id'
-    }*/
+    }
   }
 
 });
