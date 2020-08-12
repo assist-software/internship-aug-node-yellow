@@ -1,3 +1,6 @@
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+
 const Workout=sequelize.define('workout',{
     duration:{
         type: DataTypes.DOUBLE,
@@ -27,4 +30,4 @@ const Workout=sequelize.define('workout',{
 
 });
 Workout.belongsTo(User);
-Workout.belongsTo(Event);
+//Workout.belongsTo(Event);

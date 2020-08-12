@@ -1,17 +1,14 @@
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
+module.exports=(sequelize,Sequelize)=>{
 const Sport = sequelize.define('sport', {
   
     type: {
         type: DataTypes.STRING,
-        allowNull: fase
+        allowNull: false
 
     }
 });
+return Sport;}
 
-Sport.sync().then(() => {
-    Sport.create({
-      type: 'Running'
-    });
-    Sport.create({
-      type: 'Clicling'
-    });
-  });
+
