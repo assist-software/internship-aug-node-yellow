@@ -1,8 +1,11 @@
 const db = require("../models");
-const Club = db.clubs;
-const User= db.users;
-const Role=db.roles;
+const Club = db.club;
+const User= db.user;
+const Role=db.role;
 
+exports.create = (req, res) => {
+
+}
 
 exports.update = (req, res) => {
 

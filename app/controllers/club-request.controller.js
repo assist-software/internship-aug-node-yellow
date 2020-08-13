@@ -36,7 +36,8 @@ exports.accept = (req, res) => {
           });
           return;
       }
-      return ClubMember.create(requestData);
+      console.log(requestData);
+      return ClubMember.create(requestData.dataValues);
     })
     .then(memberData => {
         return ClubRequest.destroy({

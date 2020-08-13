@@ -1,5 +1,7 @@
-const db = require("./models");
-const config = require("./config/auth.config");
+const db = require("../models");
+const config = require("../config/auth.config");
+const authJwt = require("../middlewares/authJwt");
+
 const User = db.user;
 const Role = db.role;
 
@@ -9,11 +11,15 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.register = (req, res) => {
+ 
+
+  
   // Save User to Database
   User.create({
-    username: req.body.username,
+    //username: req.body.username,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
+
   })
     .then(user => {
       if (req.body.roles) {
@@ -21,6 +27,7 @@ exports.register = (req, res) => {
           where: {
             name: {
               [Op.or]: req.body.roles
+             
             }
           }
         }).then(roles => {
@@ -36,14 +43,14 @@ exports.register = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: err.message});
     });
 };
 
 exports.login = (req, res) => {
   User.findOne({
     where: {
-      username: req.body.username
+     // username: req.body.username
     }
   })
     .then(user => {
@@ -74,7 +81,7 @@ exports.login = (req, res) => {
         }
         res.status(200).send({
           id: user.id,
-          username: user.username,
+          //username: user.username,
           email: user.email,
           roles: authorities,
           accessToken: token
@@ -82,6 +89,6 @@ exports.login = (req, res) => {
       });
     })
     .catch(err => {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: err.message  });
     });
 };
