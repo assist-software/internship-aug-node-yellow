@@ -9,18 +9,17 @@ const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-const { INITIALLY_DEFERRED } = require("sequelize/types/lib/deferrable");
 
 exports.register = (req, res) => {
  
 
-  
+
   // Save User to Database
   User.create({
     //username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-
+    
   })
     .then(user => {
       if (req.body.roles) {
@@ -64,6 +63,7 @@ exports.login = (req, res) => {
         req.body.password,
         user.password
       );
+
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
