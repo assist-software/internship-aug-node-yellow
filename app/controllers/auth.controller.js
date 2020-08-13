@@ -13,13 +13,13 @@ var bcrypt = require("bcryptjs");
 exports.register = (req, res) => {
  
 
-  
+
   // Save User to Database
   User.create({
     //username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-
+    
   })
     .then(user => {
       if (req.body.roles) {
@@ -51,6 +51,7 @@ exports.login = (req, res) => {
   User.findOne({
     where: {
      // username: req.body.username
+     email: req.body.email
     }
   })
     .then(user => {
@@ -58,7 +59,7 @@ exports.login = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
+      var passwordIsValid = bcrypt.compare(
         req.body.password,
         user.password
       );
