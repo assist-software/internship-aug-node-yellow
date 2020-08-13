@@ -41,19 +41,19 @@ exports.remove = (req, res) => {
             });
         } else {
             res.status(404).send({
-                message: `ClubMember with id:${id} was not found.`
+                message: `ClubMember with id: ${id} was not found.`
             });
         }
     })
     .catch(err => {
         res.status(500).send({
-            message: "Could not delete ClubMember with id:" + id
+            message: "Could not delete ClubMember with id: " + id
         });
     });
 }
 
 exports.list = (req, res) => {
-    const clubId = req.params.id;
+    const clubId = req.params.clubId;
 
     ClubMember.findAll({
         where: {club_id: clubId}
