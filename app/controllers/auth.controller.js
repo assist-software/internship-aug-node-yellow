@@ -9,6 +9,7 @@ const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const { INITIALLY_DEFERRED } = require("sequelize/types/lib/deferrable");
 
 exports.register = (req, res) => {
  
