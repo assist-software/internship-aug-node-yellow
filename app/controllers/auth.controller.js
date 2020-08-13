@@ -51,6 +51,7 @@ exports.login = (req, res) => {
   User.findOne({
     where: {
      // username: req.body.username
+     email: req.body.email
     }
   })
     .then(user => {
@@ -58,11 +59,10 @@ exports.login = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
+      var passwordIsValid = bcrypt.compare(
         req.body.password,
         user.password
       );
-
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
