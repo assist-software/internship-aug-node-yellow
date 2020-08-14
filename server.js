@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
 //db.sequelize.sync({ force: true });
-db.sequelize.sync();
+db.sequelize.sync(); 
 
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
@@ -43,7 +43,7 @@ Role.sync().then(() => {
 const User = db.sequelize.define('user', {
   email: { type: db.Sequelize.STRING },
   password: { type: db.Sequelize.STRING },
-  role_id: { type: db.Sequelize.INTEGER },
+  role_id: { type: db.Sequelize.INTEGER }
 
 });
 User.sync().then(() => {
