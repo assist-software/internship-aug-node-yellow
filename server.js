@@ -81,20 +81,34 @@ Sport.sync().then(() => {
       });
     });
     //////////////////////////
+    const Club = db.sequelize.define('club', {
+      name: {type: db.Sequelize.STRING},
+      owner_id: {type: db.Sequelize.INTEGER}
+    
+    });
+    Club.sync().then(() => {
+      Club.create(
+        {
+        name: 'forta',
+        owner_id: 2
+      });
+      Club.create({
+        name: 'lavie',
+        owner_id: 1
+      });
+    });
     // simple route
     app.get("/", (req, res) => {
       res.json({ message: "Hello world!" });
-
-
-
     });
 
     require('./app/routes/auth.routes.js')(app);
 
+require("./app/routes/club-member.routes.js")(app);
+require("./app/routes/club-request.routes.js")(app);
 
-
-    // set port, listen for requests
-    const PORT = process.env.PORT || 8080;
-    app.listen(PORT, () => {
-      console.log(`Yellow team server is running on port ${PORT}.`);
-    });
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Yellow team server is running on port ${PORT}.`);
+});

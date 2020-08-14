@@ -35,8 +35,4 @@ db.workout = require("./workout.model.js")(sequelize, Sequelize);
 db.eventMember = require("./event-member.model.js")(sequelize, Sequelize);
 
 
-
-//db.workout = require("./workout.model.js")(sequelize, Sequelize);
-//db.club = require("./club.model.js")(sequelize, Sequelize);
-
 module.exports = db;
