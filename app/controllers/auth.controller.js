@@ -1,6 +1,6 @@
 const db = require("../models");
 const config = require("../config/auth.config");
-const authJwt = require("../middlewares/authJwt");
+//const authJwt = require("../middlewares/authJwt");
 
 const User = db.user;
 const Role = db.role;
@@ -17,7 +17,6 @@ exports.register = (req, res) => {
   // Save User to Database
   User.create({
     //username: req.body.username,
-    first_name: req.body.first_name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
     role_id: req.body.role_id
