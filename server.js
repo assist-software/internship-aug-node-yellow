@@ -43,7 +43,7 @@ Role.sync().then(() => {
 const User = db.sequelize.define('user', {
   email: { type: db.Sequelize.STRING },
   password: { type: db.Sequelize.STRING },
-  role_id: { type: db.Sequelize.INTEGER }
+  role_id: { type: db.Sequelize.INTEGER },
 
 });
 User.sync().then(() => {

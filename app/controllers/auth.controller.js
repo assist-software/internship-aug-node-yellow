@@ -17,18 +17,20 @@ exports.register = (req, res) => {
   // Save User to Database
   User.create({
     //username: req.body.username,
+    first_name: req.body.first_name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
     role_id: req.body.role_id
+    
     
   })
     .then(user => {
       if (req.body.roles) {
         Role.findAll({
           where: {
-            id : {//
-              //[Op.or]: req.body.roles
-              [op.col]: ('id', req.body.role_id)
+            name : {//
+              [Op.or]: req.body.roles
+              //[op.col]: ('id', req.body.role_id)
             }
 
           }
