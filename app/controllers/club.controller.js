@@ -66,7 +66,60 @@ exports.create = (req, res) => {
 }
 
 exports.update = (req, res) => {
+  const id = req.params.clubId;
+  var token = req.headers['x-access-token'];
+  if(!token) {
+    return res.status(401).send({
+      message: "No token provided."
+    });
+  }
 
+  jwt.verify(token, config.secret, function(err, decoded) {
+    if(err) {
+      return res.status(500).send({
+        message: "Failed to authenticate token."
+      });
+    }
+    User.findById(decoded.id, function(err, user) {
+      if(err) {
+        return res.status(500).send({
+          message: "There was a problem finding the user."
+        });
+      }
+      if(!user) {
+        return res.status(404).send({
+          message: "No user found."
+        });
+      }
+
+      Role.findOne({
+        where: {id: user.role_id}
+      })
+      .then(roleData => {
+        if(roleData == null) {
+          return res.status(404);
+        }
+        if(roleData.isAdmin == false && req.body.owner_id != decoded.id) {
+          return res.status(403).send({message: "Permission denied."});
+        }
+
+        Club.update(req.body, {
+          where: {id: id}
+        })
+        .then(num => {
+          if(num == 1) {
+            res.status(200)
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({message: err.message});
+        });
+      })
+      .catch(err => {
+        return req.status(500).send({message: err.message});
+      });
+    });
+  });
 };
 exports.get = (req, res) => {
 
