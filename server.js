@@ -106,6 +106,7 @@ Sport.sync().then(() => {
 
 require("./app/routes/club-member.routes.js")(app);
 require("./app/routes/club-request.routes.js")(app);
+require("./app/routes/club.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

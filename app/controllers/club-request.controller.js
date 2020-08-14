@@ -63,7 +63,7 @@ exports.decline = (req, res) => {
         where: {id: id}
     })
     .then(num => {
-        if(num == 1) {
+        if(num >= 1) {
             res.status(200).send({
                 message: "ClubRequest deleted successfully!"
             });
