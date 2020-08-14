@@ -19,18 +19,21 @@ exports.register = (req, res) => {
     //username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
+    role_id: req.body.role_id
     
   })
     .then(user => {
       if (req.body.roles) {
         Role.findAll({
           where: {
-            name: {
-              [Op.or]: req.body.roles
-             
+            id : {//
+              //[Op.or]: req.body.roles
+              [op.col]: ('id', req.body.role_id)
             }
+
           }
         }).then(roles => {
+          // console.log(roles);
           user.setRoles(roles).then(() => {
             res.send({ message: "User was registered successfully!" });
           });
@@ -43,7 +46,7 @@ exports.register = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({ message: err.message});
+      res.status(500).send({ message: err.message + " Aici"});
     });
 };
 
@@ -90,6 +93,6 @@ exports.login = (req, res) => {
       });
     })
     .catch(err => {
-      res.status(500).send({ message: err.message  });
+      res.status(500).send({ message: err.message });
     });
 };
