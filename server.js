@@ -104,8 +104,6 @@ Sport.sync().then(() => {
 
     require('./app/routes/auth.routes.js')(app);
 
-
-
 require("./app/routes/club-member.routes.js")(app);
 require("./app/routes/club-request.routes.js")(app);
 
