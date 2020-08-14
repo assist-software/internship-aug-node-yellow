@@ -54,7 +54,7 @@ exports.create = (req, res) => {
           req.body.invite_members.forEach(email => {
             ClubInvite.create({
               email: email,
-              clubId: data.id
+              club_id: data.id
             });
           }); 
           return res.status(200).send("Club added successfully!");
@@ -149,10 +149,10 @@ exports.search = (req, res) => {
     Club.findAll({
       where: {
         name: {
-          [Op.ilike]: req.body.name
+          [Op.ilike]: `%${req.body.name}%`
         },
         owner_id: {
-          [Op.ilike]: req.body.ownerId
+          [Op.ilike]: `%${req.body.ownerId}%`
         }
       }
     }).
