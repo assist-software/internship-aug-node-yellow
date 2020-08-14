@@ -1,6 +1,6 @@
 const db = require("../models");
 const config = require("../config/auth.config");
-const authJwt = require("../middlewares/authJwt");
+//const authJwt = require("../middlewares/authJwt");
 
 const User = db.user;
 const Role = db.role;
@@ -21,14 +21,15 @@ exports.register = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8),
     role_id: req.body.role_id
     
+    
   })
     .then(user => {
       if (req.body.roles) {
         Role.findAll({
           where: {
-            id : {//
-              //[Op.or]: req.body.roles
-              [op.col]: ('id', req.body.role_id)
+            name : {//
+              [Op.or]: req.body.roles
+              //[op.col]: ('id', req.body.role_id)
             }
 
           }
