@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const db = require("./app/models");
-const db1 = require("./app/models/index");
+//const db = require("./app/models");
+const db = require("./app/models/index");
 
 
 const app = express();
@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //db.sequelize.sync({ force: true });
 db.sequelize.sync();
 
-const Role = db1.sequelize.define('role', {
-  name: { type: db1.Sequelize.STRING },
-  isAdmin: { type: db1.Sequelize.BOOLEAN }
+const Role = db.sequelize.define('role', {
+  name: { type: db.Sequelize.STRING },
+  isAdmin: { type: db.Sequelize.BOOLEAN }
 });
 Role.sync().then(() => {
   Role.create({
@@ -40,10 +40,10 @@ Role.sync().then(() => {
 });
 ////////////////////////////////
 
-const User = db1.sequelize.define('user', {
-  email: { type: db1.Sequelize.STRING },
-  password: { type: db1.Sequelize.STRING },
-  role_id: { type: db1.Sequelize.INTEGER }
+const User = db.sequelize.define('user', {
+  email: { type: db.Sequelize.STRING },
+  password: { type: db.Sequelize.STRING },
+  role_id: { type: db.Sequelize.INTEGER }
 
 });
 User.sync().then(() => {
@@ -64,8 +64,8 @@ User.sync().then(() => {
   });
 });
 /////////////////////////////
-const Sport = db1.sequelize.define('sport', {
-  type: { type: db1.Sequelize.STRING }
+const Sport = db.sequelize.define('sport', {
+  type: { type: db.Sequelize.STRING }
 });
 Sport.sync().then(() => {
   Sport.create({
