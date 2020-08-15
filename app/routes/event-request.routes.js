@@ -1,4 +1,4 @@
-module.exports = (app) => {
+module.exports = app => {
     const event_requests = require("../controllers/event-request.controller.js");
 
     var router = require("express").Router();
