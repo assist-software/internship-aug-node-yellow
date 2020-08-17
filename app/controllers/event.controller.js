@@ -1,11 +1,10 @@
 const db = require("../models");
-const { now } = require("sequelize/types/lib/utils");
 const Event = db.event;
 const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const isBlob = require("is-blob");
-const sendMail = require("../utilis/email.utilis.js");
+const sendMail = require("../utils/email.utils.js");
 const Op = require("sequelize");
 
 exports.create = (req, res) => {
@@ -23,7 +22,7 @@ exports.create = (req, res) => {
   });
   
   //Validate date
-  const date = req.body.date;
+  let date = req.body.date;
   if(date instanceof Date && !isNaN(date) && moment() > date) {
     return res.status(400).send({
         message: "Invalid date."
@@ -31,7 +30,7 @@ exports.create = (req, res) => {
   }
 
   //Validate time
-  const time = req.body.time;
+  let time = req.body.time;
   if(moment(time, "LT", true).isValid() == false) {
     return res.status(400).send({
         message: "Invalid time."
@@ -39,7 +38,7 @@ exports.create = (req, res) => {
   } 
 
   //Validate name
-  const name = req.body.name.trim();
+  let name = req.body.name.trim();
   if(!name) {
     return res.status(400).send({
         message: "Invalid name."
@@ -47,7 +46,7 @@ exports.create = (req, res) => {
   }
 
   //Validate description
-  const description = req.body.description.trim();
+  let description = req.body.description.trim();
   if(!description) {
       return res.status(400).send({
         message: "Invalid description."
@@ -55,7 +54,7 @@ exports.create = (req, res) => {
   }
 
   //Validate location
-  const location = req.body.location.trim();
+  let location = req.body.location.trim();
   if(!location) {
       return res.status(400).send({
         message: "Invalid location."
@@ -63,7 +62,7 @@ exports.create = (req, res) => {
   }
 
   //Validate radius
-  const radius = req.body.radius;
+  let radius = req.body.radius;
   if(radius!= null && isNan(radius)) {
     return res.status(400).send({
         message: "Invalid radius."
@@ -71,7 +70,7 @@ exports.create = (req, res) => {
   }
 
   //Validate sportType
-  const sportType = req.body.sportType.trim();
+  let sportType = req.body.sportType.trim();
   let sport_type_id;
   if(sportType != null) {
       Sport.findOne({
@@ -94,7 +93,7 @@ exports.create = (req, res) => {
   }
 
   //Validate event_cover
-  const event_cover = req.body.event_cover;
+  let event_cover = req.body.event_cover;
   if(!isBlob(event_cover)) {
     return res.status(400).send({
         message: "Invalid event_cover"
@@ -149,7 +148,7 @@ exports.update = (req, res) => {
   });
   
   //Validate date
-  const date = req.body.date;
+  let date = req.body.date;
   if(date instanceof Date && !isNaN(date) && moment() > date) {
     return res.status(400).send({
         message: "Invalid date."
@@ -157,7 +156,7 @@ exports.update = (req, res) => {
   }
 
   //Validate time
-  const time = req.body.time;
+  let time = req.body.time;
   if(moment(time, "LT", true).isValid() == false) {
     return res.status(400).send({
         message: "Invalid time."
@@ -165,7 +164,7 @@ exports.update = (req, res) => {
   } 
 
   //Validate name
-  const name = req.body.name.trim();
+  let name = req.body.name.trim();
   if(!name) {
     return res.status(400).send({
         message: "Invalid name."
@@ -173,7 +172,7 @@ exports.update = (req, res) => {
   }
 
   //Validate description
-  const description = req.body.description.trim();
+  let description = req.body.description.trim();
   if(!description) {
       return res.status(400).send({
         message: "Invalid description."
@@ -181,7 +180,7 @@ exports.update = (req, res) => {
   }
 
   //Validate location
-  const location = req.body.location.trim();
+  let location = req.body.location.trim();
   if(!location) {
       return res.status(400).send({
         message: "Invalid location."
@@ -189,7 +188,7 @@ exports.update = (req, res) => {
   }
 
   //Validate radius
-  const radius = req.body.radius;
+  let radius = req.body.radius;
   if(radius!= null && isNan(radius)) {
     return res.status(400).send({
         message: "Invalid radius."
@@ -197,8 +196,8 @@ exports.update = (req, res) => {
   }
 
   //Validate sportType
-  const sportType = req.body.sportType.trim();
-  const sport_type_id;
+  let sportType = req.body.sportType.trim();
+  let sport_type_id;
   if(sportType != null) {
       Sport.findOne({
           where: {
@@ -220,7 +219,7 @@ exports.update = (req, res) => {
   }
 
   //Validate event_cover
-  const event_cover = req.body.event_cover;
+  let event_cover = req.body.event_cover;
   if(!isBlob(event_cover)) {
     return res.status(400).send({
         message: "Invalid event_cover"
