@@ -32,7 +32,8 @@ exports.authJwt = (req, res, next) => {
   ).catch(err=>{
     return res.status(500).send({message: err.message });
   });
-return authJwt;
+  req.authJwt = authJwt;
+  next();
 };
 
 
