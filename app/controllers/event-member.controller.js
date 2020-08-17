@@ -11,13 +11,13 @@ exports.create = (req, res) => {
       return;
   }
    //Create EventMember
-   const clubMemeber = {
+   const eventMemeber = {
        user_id: req.body.user_id,
        event_id: req.body.event_id
    };
 
    //Save eventMember in the db
-   EventMember.create(eventbMemeber)
+   EventMember.create(eventMemeber)
    .then(data => {
        res.status(200).send(data);
    })
@@ -29,7 +29,8 @@ exports.create = (req, res) => {
 };
 
 exports.remove = (req, res) => {
-    const id = req.params.memberId;
+    const id = req.params.inviteId;
+
 
     EventMember.destroy({
         where: {id: id}
@@ -55,7 +56,7 @@ exports.remove = (req, res) => {
 exports.list = (req, res) => {
     const eventId = req.params.eventId;
 
-    ClubMember.findAll({
+    EventMember.findAll({
         where: {event_id: eventId}
     })
     .then(data => {

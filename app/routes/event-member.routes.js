@@ -1,5 +1,5 @@
 module.exports = app => {
-    const event_members = require("../controllers/club-member.controller.js");
+    const event_members = require("../controllers/event-member.controller.js");
   
     var router = require("express").Router();
   
@@ -9,6 +9,6 @@ module.exports = app => {
   
     router.get("/:eventId", event_members.list);
   
-    app.use('/api/club/member', router);
+    app.use('/api/event/member', router);
   }
   

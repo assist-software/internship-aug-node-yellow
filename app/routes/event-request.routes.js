@@ -1,4 +1,4 @@
-module.exports = (app) => {
+module.exports = app => {
     const event_requests = require("../controllers/event-request.controller.js");
 
     var router = require("express").Router();
@@ -9,7 +9,7 @@ module.exports = (app) => {
 
     router.delete("/decline/:requestId", event_requests.decline);
 
-    router.get("/:clubId", event_requests.list);
+    router.get("/:eventId", event_requests.list);
 
-    app.use('/api/club/request', router);
+    app.use('/api/event/request', router);
 }

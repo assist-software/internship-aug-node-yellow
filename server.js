@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+//const db = require("./app/models");
 const db = require("./app/models/index");
 
 
@@ -47,7 +48,7 @@ const User = db.sequelize.define('user', {
 });
 User.sync().then(() => {
   User.create({
-    email: 'test1@test.com',
+    email: 'andrei.seby45@yahoo.com',
     password: 'true',
     role_id: 1
   });
@@ -132,9 +133,8 @@ app.get("/", (req, res) => {
 
 require('./app/routes/auth.routes.js')(app);
 
-require("./app/routes/club-member.routes.js")(app);
-require("./app/routes/club-request.routes.js")(app);
 require("./app/routes/club.routes.js")(app);
+require("./app/routes/club-invite.routes.js")(app);
 require("./app/routes/event-request.routes.js")(app);
 require("./app/routes/event-member.routes.js")(app);
 require("./app/routes/event.routes.js")(app);
