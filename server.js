@@ -117,11 +117,11 @@ Event.sync().then(()=>{
     time:'00:00:00',
     description:'stai acasa',
     location:'la tine acasa',
-    club_id:3,
+    club_id:2,
     radius:3,
     sport_type_id:1,
     event_cover:0
-  })
+  });
 });
 
 

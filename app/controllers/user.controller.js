@@ -6,24 +6,68 @@
   const User= db.user;
   const Role=db.role;
   const ClubInvite = db.clubInvite;
-  
+  function hasNumbers(t)
+  {
+  var regex = /\d/g;
+  return regex.test(t);
+  }  
   exports.create = (req, res) => {
 
 //mai am de scris aici validarile si de implementat functiile: update, get, search si delete
+let f_name = req.body.first_name;
+let l_name = req.body.last_name;
+let _gender = req.body.gender;
+let p_Sport = req.body.primarySport;
+let s_Sport = req.body.secondarySport;
+
+
+if(hasNumbers(f_name) || f_name.length < 3 )//|| f_name.trim().length != f_name.length)
+{
+return res.status(400).send({  message: "Invalid first name."});
+}
+
+if(hasNumbers(l_name) || l_name.length < 3 )
+{
+return res.status(400).send({  message: "Invalid last name."});
+}
+if(!(_gender === "male" || _gender === "female"))
+{
+  return res.status(400).send({  message: "Invalid gender."});
+}
+if(hasNumbers(p_Sport) || p_Sport.length < 3 )
+{
+  return res.status(400).send({  message: "Invalid Primary Sport."});
+}
+if(hasNumbers(s_Sport) || s_Sport.length < 3 )
+{
+  return res.status(400).send({  message: "Invalid Secondary Sport."});
+}
+if(isNaN(_height) || _height<150 || _height >300)
+{
+  return res.status(400).send({  message: "Invalid height."});
+}
+if(isNaN(_weight) || _weight <30 || _weight > 100)
+{
+  return res.status(400).send({  message: "Invalid weight."});
+}
+if(isNaN(_age) || _age < 5 || _age > 100)
+{
+  return res.status(400).send({  message: "Invalid age."});
+}
 
 const user = {
- first_name: req.body.first_name,
- last_name: req.body.last_name,
+ first_name: f_name,
+ last_name: l_name,
  email: req.body.email,
  password: req.body.password,
  confirm_password: req.body.confirm_password,
  role: req.body.role,
- gender: req.body.gender,
- primarySport: req.body.primarySport,
- secondarySport: req.body.secondarySport,
- height: req.body.height,
- weight: req.body.weight,
- age: req.body.age,
+ gender: _gender,
+ primarySport: p_Sport,
+ secondarySport: s_Sport,
+ height: _height,
+ weight: _weight,
+ age: _age,
  profile_photo: req.body.profile_photo
         };
 
