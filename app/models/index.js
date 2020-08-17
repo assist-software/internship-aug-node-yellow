@@ -44,5 +44,4 @@ db.user.belongsToMany(db.role, {
   foreignKey: "userId",
   otherKey: "roleId"
 });
-
 module.exports = db;
