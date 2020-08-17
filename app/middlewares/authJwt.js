@@ -8,7 +8,8 @@ exports.authJwt = (req, res, next) => {
   let token = req.headers["x-access-token"];
   const authJwt = {
     verifyToken: null,
-    role_id: null
+    role_id: null,
+    user_id: null
   };
   if (!token) {
     return res.status(403).send({
@@ -22,7 +23,7 @@ exports.authJwt = (req, res, next) => {
         message: "Unauthorized!"
       });
     }
-    userId = decoded.id;
+    authJwt.user_id = decoded.id;
     next();
   });
   User.findByPk(userId).then(user=>{
