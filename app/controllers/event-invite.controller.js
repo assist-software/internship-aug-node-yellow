@@ -10,20 +10,21 @@ exports.create = (req, res) => {
   Event.findByPk(req.body.eventId)
   .then(data => {
       if(data == null) {
-          return res.status(404).send({
+          res.status(404).send({
               message: "Event not found."
           });
       }
   })
   .catch(err => {
-      return res.status(500).send({
+      res.status(500).send({
           message: err.message
         });
   });
   
   //Validate email
-  if(validator.isEmail(req.body.email) == false) {
-      return res.status(400).send({
+  var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(regex.test(req.body.email) == false) {
+      res.status(400).send({
           message: "Invalid email."
       });
   }
@@ -36,10 +37,10 @@ exports.create = (req, res) => {
 
   EventInvite.create(eventInvite)
   .then(data => {
-      return res.status(200).send(data);
+      res.status(200).send(data);
   })
   .catch(err => {
-      return res.status(500).send({
+      res.status(500).send({
           message: err.message
       });
   });
@@ -51,7 +52,7 @@ exports.accept = (req, res) => {
   EventInvite.findByPk(req.params.inviteId)
   .then(data => {
       if(data == null) {
-          return res.status(404).send({
+          res.status(404).send({
               message: "Invitation not found."
           });
       } else { 
@@ -67,7 +68,7 @@ exports.accept = (req, res) => {
   })
   .then(userData => {
       if(userData ==  null) {
-          return res.status(404).send({
+          res.status(404).send({
               message: "User not found."
           });
       } else {
@@ -81,16 +82,16 @@ exports.accept = (req, res) => {
   })
   .then(eventMemberData => {
     return EventInvite.destroy({
-        where: {id: inviteId}
+        where: {id: req.params.inviteId}
     });
   })
   .then(num => {
-      if(num == 1) {
-          return res.status(200);
-      }
+        res.status(200).send({
+            message: "Invitation accepted successfully!"
+        });
   })
   .catch(err => {
-      return res.status(500).send({
+      res.status(500).send({
           message: err.message
       });
   });
@@ -102,7 +103,7 @@ exports.decline = (req, res) => {
   EventInvite.findByPk(id)
   .then(eventInviteData => {
       if(eventInviteData == null) {
-          return res.status(404).send({
+          res.status(404).send({
               message: "Invitation not found."
           });
       } else {
@@ -112,12 +113,12 @@ exports.decline = (req, res) => {
       }
   })  
   .then(num => {
-      if(num == 1) {
-          return res.status(200);
-      }
+        res.status(200).send({
+            message: "Invitation declined successfully!"
+        });
   })
   .catch(err => {
-      return res.status(500).send({
+      res.status(500).send({
           message: err.message
       });
   });
