@@ -6,7 +6,7 @@ const Club = db.club;
 const User = db.user;
 const Role = db.role;
 const ClubInvite = db.clubInvite;
-const authJwt = require("./authJwt.js");
+const authJwt = require("../middlewares/authJwt.js");
 
 exports.create = (req, res) => {
   //require middleware instead

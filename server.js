@@ -133,11 +133,6 @@ app.get("/", (req, res) => {
 
 require('./app/routes/auth.routes.js')(app);
 
-require("./app/routes/club-member.routes.js")(app);
-require("./app/routes/club-request.routes.js")(app);
-require("./app/routes/event-request.routes.js")(app);
-require("./app/routes/event-member.routes.js")(app);
-
 require("./app/routes/club.routes.js")(app);
 require("./app/routes/club.routes.js")(app);
 require("./app/routes/event-request.routes.js")(app);
