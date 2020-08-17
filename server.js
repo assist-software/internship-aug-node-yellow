@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-//const db = require("./app/models");
 const db = require("./app/models/index");
 
 
@@ -71,42 +70,75 @@ Sport.sync().then(() => {
   Sport.create({
     type: 'fotbal american',
   });
-  
-    Sport.create({
-      type: 'fotbal feminin',
-    });
 
-      Sport.create({
-        type: 'fotbal masculin',
-      });
-    });
-    //////////////////////////
-    const Club = db.sequelize.define('club', {
-      name: {type: db.Sequelize.STRING},
-      owner_id: {type: db.Sequelize.INTEGER}
-    
-    });
-    Club.sync().then(() => {
-      Club.create(
-        {
-        name: 'forta',
-        owner_id: 2
-      });
-      Club.create({
-        name: 'lavie',
-        owner_id: 1
-      });
-    });
-    // simple route
-    app.get("/", (req, res) => {
-      res.json({ message: "Hello world!" });
-    });
+  Sport.create({
+    type: 'fotbal feminin',
+  });
 
-    require('./app/routes/auth.routes.js')(app);
+  Sport.create({
+    type: 'fotbal masculin',
+  });
+});
+//////////////////////////
+const Club = db.sequelize.define('club', {
+  name: { type: db.Sequelize.STRING },
+  owner_id: { type: db.Sequelize.INTEGER }
+
+});
+Club.sync().then(() => {
+  Club.create(
+    {
+      name: 'forta',
+      owner_id: 2
+    });
+  Club.create({
+    name: 'lavie',
+    owner_id: 1
+  });
+});
+///////////////////////////////////////////
+
+const Event = db.sequelize.define("event", {
+  name: { type: db.Sequelize.STRING },
+  date: { type: db.Sequelize.DATE },
+  time: { type: db.Sequelize.TIME },
+  description: { type: db.Sequelize.TEXT },
+  location: { type: db.Sequelize.STRING },
+  club_id: { type: db.Sequelize.INTEGER },
+  radius: { type: db.Sequelize.INTEGER },
+  sport_type_id:{type: db.Sequelize.INTEGER},
+  event_cover: {type: db.Sequelize.BLOB}
+});
+
+Event.sync().then(()=>{
+  Event.create({
+    name:'First event',
+    date:'2015-03-25',
+    time:'00:00:00',
+    description:'stai acasa',
+    location:'la tine acasa',
+    club_id:3,
+    radius:3,
+    sport_type_id:1,
+    event_cover:0
+  })
+});
+
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Hello world!" });
+});
+
+require('./app/routes/auth.routes.js')(app);
 
 require("./app/routes/club-member.routes.js")(app);
 require("./app/routes/club-request.routes.js")(app);
 require("./app/routes/club.routes.js")(app);
+require("./app/routes/event-request.routes.js")(app);
+require("./app/routes/event-member.routes.js")(app);
+require("./app/routes/event.routes.js")(app);
+require("./app/routes/event-invite.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

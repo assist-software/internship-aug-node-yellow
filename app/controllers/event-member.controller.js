@@ -56,7 +56,7 @@ exports.list = (req, res) => {
     const eventId = req.params.eventId;
 
     ClubMember.findAll({
-        where: {club_id: eventId}
+        where: {event_id: eventId}
     })
     .then(data => {
         res.status(200).send(data);
