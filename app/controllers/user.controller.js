@@ -10,6 +10,7 @@
   exports.create = (req, res) => {
 
 //mai am de scris aici validarile si de implementat functiile: update, get, search si delete
+
 const user = {
  first_name: req.body.first_name,
  last_name: req.body.last_name,
@@ -25,6 +26,7 @@ const user = {
  age: req.body.age,
  profile_photo: req.body.profile_photo
         };
+
          User.create(user)
           .then(data => {
             
