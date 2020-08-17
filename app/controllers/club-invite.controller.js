@@ -58,22 +58,19 @@ exports.accept = (req, res) => {
     ClubInvite.findByPk(id)
     .then(data=>{
         const mail=data.email;
-        sendMail.sendMail([mail],`Accepted ${id}`,'You was accepted in club');
-        console.log("am ajuns");
+        sendMail.sendMail([mail],'Accepted','You was accepted in club');
         User.findOne({
             where: { email: mail }})
             .then(date=>{
-                console.log(date);
                 if(date===null)
                     {
                         deleteI(id);
                         res.status(404).send({
                                           message: `User with email:${mail} doesn't exist.`})
-                        //return;
+                        
                     }
                     else
                     {
-                        console.log("am ajuns");
                         const clubMember = {
                             club_id: req.body.club_id,
                             user_id: date.id

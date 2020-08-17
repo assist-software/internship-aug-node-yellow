@@ -55,7 +55,6 @@ exports.remove = (req, res) => {
 
 exports.list = (req, res) => {
     const eventId = req.params.eventId;
-    console.log(eventId);
 
     EventMember.findAll({
         where: {event_id: eventId}
