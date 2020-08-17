@@ -139,6 +139,8 @@ require("./app/routes/event-request.routes.js")(app);
 require("./app/routes/event-member.routes.js")(app);
 require("./app/routes/event.routes.js")(app);
 require("./app/routes/event-invite.routes.js")(app);
+require("./app/routes/user.routes.js")(app);
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
