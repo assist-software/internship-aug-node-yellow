@@ -1,6 +1,4 @@
 const db = require("../models");
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config");
 const Op = require("sequelize");
 const Club = db.club;
 const User = db.user;
@@ -11,11 +9,11 @@ const authJwt = require("../middlewares/authJwt.js");
 exports.create = (req, res) => {
   //require middleware instead
 
-  if (authJwt.role_id == 3) {
+  if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
-  } else if (authJwt.role_id == 2) {
+  } else if (req.authJwt.role_id == 2) {
     req.body.ownerId = authJwt.user_id;
   }
   const club = {
@@ -44,21 +42,23 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.clubId;
-  if(authJwt.role_id == 3) {
+  if(req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
-  } else if(authJwt.role_id == 2 && req.body.ownerId != authJwt.user_id) {
+  } else if(req.authJwt.role_id == 2 && req.body.ownerId != authJwt.user_id) {
     return res.status(403).send({
       message: "Access denied."
     });
-  }
-  Club.update(req.body, { where: { id: id } })
+  } else {
+    Club.update(req.body, { where: { id: id } })
     .then(num => {
-      if (num >= 1) {
+      if (num == 1) {
         return Club.findByPk(id);
       } else {
-        return res.status(404);
+        return res.status(404).send({
+          message: "Club not found."
+        });
       }
     })
     .then(data => {
@@ -67,9 +67,9 @@ exports.update = (req, res) => {
     .catch(err => {
       return req.status(500).send({ message: err.message });
     });
-
-
+  }
 };
+
 exports.get = (req, res) => {
   if (req.session.user == null) {
     return res.status(403).send({ message: "Permission denied." });
@@ -97,13 +97,13 @@ exports.search = (req, res) => {
           [Op.ilike]: `%${req.body.ownerId}%`
         }
       }
-    }).
-      then(data => {
+    })
+      .then(data => {
         return res.status(200).send(data);
       })
       .catch(err => {
         return res.status(500).send({ message: err.message });
-      })
+      });
   }
 };
 

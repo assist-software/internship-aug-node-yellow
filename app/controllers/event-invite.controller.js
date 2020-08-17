@@ -22,7 +22,8 @@ exports.create = (req, res) => {
   });
   
   //Validate email
-  if(validator.isEmail(req.body.email) == false) {
+  var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(regex.test(req.body.email) == false) {
       return res.status(400).send({
           message: "Invalid email."
       });
@@ -81,7 +82,7 @@ exports.accept = (req, res) => {
   })
   .then(eventMemberData => {
     return EventInvite.destroy({
-        where: {id: inviteId}
+        where: {id: req.params.inviteId}
     });
   })
   .then(num => {

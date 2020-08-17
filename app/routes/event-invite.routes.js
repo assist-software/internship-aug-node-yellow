@@ -7,7 +7,7 @@ module.exports = (app) => {
 
     router.post("/accept/:inviteId", event_invites.accept);
 
-    router.delete("/decline/:requestId", event_invites.decline);
+    router.delete("/decline/:inviteId", event_invites.decline);
 
     router.get("/:eventId", event_invites.list);
 
