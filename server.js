@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+//const db = require("./app/models");
 const db = require("./app/models/index");
 
 
@@ -17,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
 //db.sequelize.sync({ force: true });
-db.sequelize.sync();
+db.sequelize.sync(); 
 
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
@@ -137,6 +138,7 @@ require("./app/routes/club-request.routes.js")(app);
 require("./app/routes/event-request.routes.js")(app);
 require("./app/routes/event-member.routes.js")(app);
 
+require("./app/routes/club.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
