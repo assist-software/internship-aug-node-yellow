@@ -3,149 +3,114 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const Op = require("sequelize");
 const Club = db.club;
-const User= db.user;
-const Role=db.role;
+const User = db.user;
+const Role = db.role;
 const ClubInvite = db.clubInvite;
+const authJwt = require("./authJwt.js");
 
 exports.create = (req, res) => {
   //require middleware instead
-  var token = req.headers['x-access-token'];
-  if(!token) {
-    return res.status(401).send({
-      message: "No token provided."
+
+  if(authJwt.role_id == 3) {
+    return res.status(403).send({
+      message: "Access denied."
     });
+  } else if(authJwt.role_id == 2) {
+    req.body.ownerId = authJwt.user_id;
   }
-
-  jwt.verify(token, config.secret, function(err, decoded) {
-    if(err) {
-      return res.status(500).send({
-        message: "Failed to authenticate token."
+  const club = {
+    name: req.body.name,
+    owner_id: req.body.ownerId
+  };
+  Club.create(club)
+    .then(data => {
+      //invite members here
+      req.body.invite_members.forEach(email => {
+        ClubInvite.create({
+          email: email,
+          club_id: data.id
+        });
       });
-    }
-    User.findById(decoded.id, function(err, user) {
-      if(err) {
-        return res.status(500).send({
-          message: "There was a problem finding the user."
-        });
-      }
-      if(!user) {
-        return res.status(404).send({
-          message: "No user found."
-        });
-      }
-
-      Role.findOne({
-        where: {id: user.role_id}
-      })
-      .then(roleData => {
-        if(roleData == null) {
-          return res.status(404);
-        }
-        if(roleData.isAdmin == false) {
-          req.body.owner_id = decoded.id;
-        }
-
-        const club = {
-          name: req.body.name,
-          owner_id:req.body.owner_id
-        };
-        Club.create(club)
-        .then(data => {
-          //invite members here
-          req.body.invite_members.forEach(email => {
-            ClubInvite.create({
-              email: email,
-              club_id: data.id
-            });
-          }); 
-          return res.status(200).send("Club added successfully!");
-        })
-        .catch(err => {
-          return res.status(500).send({message: err.message});
-        });
-      })
-      .catch(err => {
-        return req.status(500).send({message: err.message});
-      });
+      return res.status(200).send("Club added successfully!");
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
     });
-  });
-
-
 }
 
 exports.update = (req, res) => {
   const id = req.params.clubId;
   var token = req.headers['x-access-token'];
-  if(!token) {
+  if (!token) {
     return res.status(401).send({
       message: "No token provided."
     });
   }
 
-  jwt.verify(token, config.secret, function(err, decoded) {
-    if(err) {
+  jwt.verify(token, config.secret, function (err, decoded) {
+    if (err) {
       return res.status(500).send({
         message: "Failed to authenticate token."
       });
     }
-    User.findById(decoded.id, function(err, user) {
-      if(err) {
+    User.findById(decoded.id, function (err, user) {
+      if (err) {
         return res.status(500).send({
           message: "There was a problem finding the user."
         });
       }
-      if(!user) {
+      if (!user) {
         return res.status(404).send({
           message: "No user found."
         });
       }
 
       Role.findOne({
-        where: {id: user.role_id}
+        where: { id: user.role_id }
       })
-      .then(roleData => {
-        if(roleData == null) {
-          return res.status(404);
-        }
-        if(roleData.isAdmin == false && req.body.owner_id != decoded.id) {
-          return res.status(403).send({message: "Permission denied."});
-        }
+        .then(roleData => {
+          if (roleData == null) {
+            return res.status(404);
+          }
+          if (roleData.isAdmin == false && req.body.owner_id != decoded.id) {
+            return res.status(403).send({ message: "Permission denied." });
+          }
 
-        return Club.update(req.body, {where: {id: id}});
-      })
-      .then(num => {
-          if(num >= 1) {
+          return Club.update(req.body, { where: { id: id } });
+        })
+        .then(num => {
+          if (num >= 1) {
             return Club.findByPk(id);
           } else {
             return res.status(404);
           }
         })
-      .then(data => {
-        return res.status(200).send(data);
-      })
-      .catch(err => {
-        return req.status(500).send({message: err.message});
-      });
+        .then(data => {
+          return res.status(200).send(data);
+        })
+        .catch(err => {
+          return req.status(500).send({ message: err.message });
+        });
     });
   });
 };
 exports.get = (req, res) => {
-  if(req.session.user == null) {
-    return res.status(403).send({message: "Permission denied."});
+  if (req.session.user == null) {
+    return res.status(403).send({ message: "Permission denied." });
   } else {
     Club.findByPk(req.params.clubId)
-    .then(data => {
-      return res.status(200).send(data);
-    })
-    .catch(err => {
-      return res.status(500).send({message: err.message});
-    });
+      .then(data => {
+        return res.status(200).send(data);
+      })
+      .catch(err => {
+        return res.status(500).send({ message: err.message });
+      });
   }
 };
 
 exports.search = (req, res) => {
-  if(req.session.user == null) {
-    return res.status(403).send({message: "Permission denied."});
+  if (req.session.user == null) {
+    return res.status(403).send({ message: "Permission denied." });
   } else {
     Club.findAll({
       where: {
@@ -157,12 +122,12 @@ exports.search = (req, res) => {
         }
       }
     }).
-    then(data => {
-      return res.status(200).send(data);
-    })
-    .catch(err => {
-      return res.status(500).send({message: err.message});
-    })
+      then(data => {
+        return res.status(200).send(data);
+      })
+      .catch(err => {
+        return res.status(500).send({ message: err.message });
+      })
   }
 };
 
@@ -171,23 +136,23 @@ exports.delete = (req, res) => {
   const id = req.params.clubId;
 
   Club.destroy({
-    where: {id: id}
+    where: { id: id }
   })
-  .then(num => {
-    if(num == 1) {
-      return res.status(200).send({
-        message: "Club deleted successfully!"
+    .then(num => {
+      if (num == 1) {
+        return res.status(200).send({
+          message: "Club deleted successfully!"
+        });
+      } else {
+        return res.status(404).send({
+          message: "Club not found."
+        });
+      }
+    })
+    .catch(err => {
+      return res.status(500).send({
+        message: err.message
       });
-    } else {
-      return res.status(404).send({
-        message: "Club not found."
-      });
-    }
-  })
-  .catch(err => {
-    return res.status(500).send({
-      message: err.message
     });
-  });
 };
 
