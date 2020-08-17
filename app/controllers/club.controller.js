@@ -8,6 +8,7 @@ const Role=db.role;
 const ClubInvite = db.clubInvite;
 
 exports.create = (req, res) => {
+  //require middleware instead
   var token = req.headers['x-access-token'];
   if(!token) {
     return res.status(401).send({

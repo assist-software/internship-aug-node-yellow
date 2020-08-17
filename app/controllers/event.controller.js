@@ -72,7 +72,7 @@ exports.create = (req, res) => {
 
   //Validate sportType
   const sportType = req.body.sportType.trim();
-  const sport_type_id;
+  let sport_type_id;
   if(sportType != null) {
       Sport.findOne({
           where: {
