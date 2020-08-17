@@ -1,11 +1,11 @@
 module.exports = app => {
-    const club_invites = require("../controllers/club-invites.controller.js");
+    const club_invites = require("../controllers/club-invite.controller.js");
   
     var router = require("express").Router();
   
     router.post("/create", club_invites.create);
 
-    router.post("/accept/:inviteId", club_invites.create);
+    router.post("/accept/:inviteId", club_invites.accept);
   
     router.delete("/decline/:inviteId", club_invites.remove);
   

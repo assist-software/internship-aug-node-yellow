@@ -46,7 +46,7 @@ exports.create = (req, res) => {
 };
 
 exports.accept = (req, res) => {
-  const event_id;
+  let event_id;
   //Get email from inviteId
   EventInvite.findByPk(req.params.inviteId)
   .then(data => {
