@@ -12,7 +12,11 @@ var bcrypt = require("bcryptjs");
 
 exports.register = (req, res) => {
  
+  var regex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
 
+if(!regex.test(req.body.email)){
+return res.status(400).send({ message: "Invalid email" });
+}
 
   // Save User to Database
   User.create({
@@ -24,12 +28,12 @@ exports.register = (req, res) => {
     
   })
     .then(user => {
+      //console.log("Aici ==>"+req.body.roles);
       if (req.body.roles) {
         Role.findAll({
           where: {
             name : {//
               [Op.or]: req.body.roles
-              //[op.col]: ('id', req.body.role_id)
             }
 
           }
@@ -41,7 +45,7 @@ exports.register = (req, res) => {
         });
       } else {
         // user role = 1
-        user.setRoles([1]).then(() => {
+        user.setRoles([3]).then(() => {
           res.send({ message: "User was registered successfully!" });
         });
       }
@@ -63,11 +67,10 @@ exports.login = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      var passwordIsValid = bcrypt.compare(
+      var passwordIsValid = bcrypt.compareSync(
         req.body.password,
         user.password
       );
-
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
@@ -78,22 +81,13 @@ exports.login = (req, res) => {
       var token = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 86400 // 24 hours
       });
-
-      var authorities = [];
-      user.getRoles().then(roles => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
+       
         res.status(200).send({
           id: user.id,
-          //username: user.username,
           email: user.email,
-          roles: authorities,
+          roles: user.role_id,
           accessToken: token
         });
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    
 };
