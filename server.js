@@ -8,7 +8,9 @@ const db = require("./app/models/index");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000"
+  //origin: "http://278ebb25ae31.ngrok.io"
+  //optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -126,6 +128,18 @@ Event.sync().then(()=>{
 });
 
 */
+const ClubInvite = db.sequelize.define("clubInvite", {
+  email: { type: db.Sequelize.STRING },
+  club_id: { type: db.Sequelize.INTEGER }
+  
+});
+
+ClubInvite.sync().then(()=>{
+  ClubInvite.create({
+    email:'test1@test.com',
+    club_id:2
+  });
+});
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Hello world!" });
@@ -135,6 +149,8 @@ require('./app/routes/auth.routes.js')(app);
 
 require("./app/routes/club.routes.js")(app);
 require("./app/routes/club-invite.routes.js")(app);
+require("./app/routes/club-member.routes.js")(app);
+require("./app/routes/club-request.routes.js")(app);
 require("./app/routes/event-request.routes.js")(app);
 require("./app/routes/event-member.routes.js")(app);
 require("./app/routes/event.routes.js")(app);

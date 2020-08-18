@@ -13,5 +13,5 @@ module.exports = app => {
 
     router.delete("/:clubId", clubs.delete);
 
-    app.use('api/club', router);
+    app.use('/api/club', router);
 }
