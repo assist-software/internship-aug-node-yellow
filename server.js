@@ -147,6 +147,7 @@ require('./app/routes/auth.routes.js')(app);
 
 require("./app/routes/club.routes.js")(app);
 require("./app/routes/club-invite.routes.js")(app);
+require("./app/routes/club-member.routes.js")(app);
 require("./app/routes/event-request.routes.js")(app);
 require("./app/routes/event-member.routes.js")(app);
 require("./app/routes/event.routes.js")(app);
