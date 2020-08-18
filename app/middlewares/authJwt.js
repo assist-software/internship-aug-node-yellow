@@ -7,7 +7,7 @@ let userId ;
 exports.authJwt = (req, res, next) => {
   let token = req.headers["x-access-token"];
   const authJwt = {
-    verifyToken: null,
+    verifyToken: false,
     role_id: null,
     user_id: null
   };
@@ -23,6 +23,7 @@ exports.authJwt = (req, res, next) => {
         message: "Unauthorized!"
       });
     }
+    verifyToken = true;
     authJwt.user_id = decoded.id;
     next();
   });
