@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
 //db.sequelize.sync({ force: true });
 db.sequelize.sync(); 
-
+/*
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
   isAdmin: { type: db.Sequelize.BOOLEAN }
@@ -118,14 +118,14 @@ Event.sync().then(()=>{
     time:'00:00:00',
     description:'stai acasa',
     location:'la tine acasa',
-    club_id:3,
+    club_id:2,
     radius:3,
     sport_type_id:1,
     event_cover:0
-  })
+  });
 });
 
-
+*/
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Hello world!" });
@@ -140,6 +140,8 @@ require("./app/routes/event-member.routes.js")(app);
 require("./app/routes/event.routes.js")(app);
 require("./app/routes/event-invite.routes.js")(app);
 require("./app/routes/workout.routes.js")(app);
+require("./app/routes/user.routes.js")(app);
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
