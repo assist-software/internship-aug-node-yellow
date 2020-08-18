@@ -1,20 +1,17 @@
 const db = require("../models");
 const Op = require("sequelize");
 const Club = db.club;
-const User = db.user;
-const Role = db.role;
 const ClubInvite = db.clubInvite;
-const authJwt = require("../middlewares/authJwt.js");
 
 exports.create = (req, res) => {
-  //require middleware instead
+  //require middleware
 
   if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
   } else if (req.authJwt.role_id == 2) {
-    req.body.ownerId = authJwt.user_id;
+    req.body.ownerId = req.authJwt.user_id;
   }
   const club = {
     name: req.body.name,
@@ -46,7 +43,7 @@ exports.update = (req, res) => {
     return res.status(403).send({
       message: "Access denied."
     });
-  } else if(req.authJwt.role_id == 2 && req.body.ownerId != authJwt.user_id) {
+  } else if(req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
     return res.status(403).send({
       message: "Access denied."
     });
@@ -71,7 +68,7 @@ exports.update = (req, res) => {
 };
 
 exports.get = (req, res) => {
-  if (req.session.user == null) {
+  if (req.authJwt == null) {
     return res.status(403).send({ message: "Permission denied." });
   } else {
     Club.findByPk(req.params.clubId)
@@ -85,7 +82,7 @@ exports.get = (req, res) => {
 };
 
 exports.search = (req, res) => {
-  if (req.session.user == null) {
+  if (req.authJwt == null) {
     return res.status(403).send({ message: "Permission denied." });
   } else {
     Club.findAll({
