@@ -8,7 +8,9 @@ const db = require("./app/models/index");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000"
+  //origin: "http://278ebb25ae31.ngrok.io"
+  //optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
