@@ -9,7 +9,7 @@ exports.create = (req, res) => {
   Event.findByPk(event_id)
   .then(eventData => {
       if(eventData == null) {
-          res.status(400).send({
+          res.status(404).send({
               message: "Event not found."
           });
       }
@@ -97,7 +97,7 @@ exports.update = (req, res) => {
    Event.findByPk(event_id)
    .then(eventData => {
        if(eventData == null) {
-           res.status(400).send({
+           res.status(404).send({
                message: "Event not found."
            });
        }
