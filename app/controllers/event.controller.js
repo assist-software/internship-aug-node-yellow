@@ -94,7 +94,7 @@ exports.create = (req, res) => {
 
     //Validate event_cover
     let event_cover = req.body.event_cover;
-    if (!isBlob(event_cover)) {
+    if (event_cover.type != "image/png" && event_cover.type != "image/jpeg") {
         return res.status(400).send({
             message: "Invalid event_cover"
         });
@@ -119,11 +119,14 @@ exports.create = (req, res) => {
                 //Send invite emails
                 sendMail(req.body.invite_emails, `Invitation to ${name} event`,
                     `You have been invited to ${name} event. You may accept or decline the invitation.`);
+                var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 req.body.invite_emails.forEach(email => {
-                    EventInvite.create({
-                        email: email,
-                        event_id: data.id
-                    });
+                    if (regex.test(email)) {
+                        EventInvite.create({
+                            email: email,
+                            event_id: data.id
+                        });
+                    }
                 });
             }
             return res.status(200).send(data);
