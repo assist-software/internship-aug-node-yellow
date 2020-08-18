@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
 //db.sequelize.sync({ force: true });
 db.sequelize.sync(); 
-
+/*
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
   isAdmin: { type: db.Sequelize.BOOLEAN }
@@ -125,7 +125,7 @@ Event.sync().then(()=>{
   });
 });
 
-
+*/
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Hello world!" });

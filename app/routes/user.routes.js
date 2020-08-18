@@ -7,13 +7,11 @@ module.exports = app => {
 
     router.put("/:userId", users.update);
 
-/*
     router.get("/:userId", users.get);
 
     router.post("/search", users.search);
 
-
-    router.delete("/:userId", users.delete);*/
+    router.delete("/:userId", users.delete);
 
     app.use('/api/user', router);
 }

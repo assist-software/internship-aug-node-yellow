@@ -30,37 +30,16 @@ if((authRoleId == 3 || authRoleId == 2) && (req.body.role_id != 3))
   // Save User to Database
   User.create(newUser)
     .then(user => {
-      //console.log("Aici ==>"+req.body.roles);
-      if (req.body.roles) {
-        Role.findAll({
-          where: {
-            name : {//
-              [Op.or]: req.body.roles
-            }
-
-          }
-        }).then(roles => {
-          // console.log(roles);
-          user.setRoles(roles).then(() => {
-            res.send({ message: "User was registered successfully!" });
-          });
-        });
-      } else {
-        // user role = 1
-        user.setRoles([3]).then(() => {
-          res.send({ message: "User was registered successfully!" });
-        });
-      }
+      res.status(200).send(user);
     })
     .catch(err => {
-      res.status(500).send({ message: err.message + " Aici"});
+      res.status(500).send({ message: err.message});
     });
 };
 
 exports.login = (req, res) => {
   User.findOne({
     where: {
-     // username: req.body.username
      email: req.body.email
     }
   })
