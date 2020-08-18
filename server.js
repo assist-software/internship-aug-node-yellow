@@ -126,6 +126,18 @@ Event.sync().then(()=>{
 });
 
 */
+const ClubInvite = db.sequelize.define("clubInvite", {
+  email: { type: db.Sequelize.STRING },
+  club_id: { type: db.Sequelize.INTEGER }
+  
+});
+
+ClubInvite.sync().then(()=>{
+  ClubInvite.create({
+    email:'test1@test.com',
+    club_id:2
+  });
+});
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Hello world!" });

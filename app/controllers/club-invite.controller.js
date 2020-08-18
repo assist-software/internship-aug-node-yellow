@@ -111,9 +111,9 @@ exports.remove = (req, res) => {
 };
 
 exports.list = (req, res) => {
-    const clubId = req.params.id;
+    const clubId = req.params.clubId;
     ClubInvite.destroy({
-        where: { id: id }
+        where: { id: clubId }
     })
         .then(num => {
             if (num == 1) {
@@ -122,13 +122,13 @@ exports.list = (req, res) => {
                 });
             } else {
                 res.status(404).send({
-                    message: `ClubInvite with id:${id} was not found.`
+                    message: `ClubInvite with id:${clubId} was not found.`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete ClubInvite with id:" + id
+                message: "Could not delete ClubInvite with id:" + clubId
             });
         });
     ClubInvite.findAll({

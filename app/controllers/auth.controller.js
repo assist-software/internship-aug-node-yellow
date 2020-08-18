@@ -36,7 +36,7 @@ if((authRoleId == 3 || authRoleId == 2) && (req.body.role_id != 3))
       res.status(500).send({ message: err.message});
     });
 };
-
+// Blob.toString();
 exports.login = (req, res) => {
   User.findOne({
     where: {
