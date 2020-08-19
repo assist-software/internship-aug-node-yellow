@@ -12,4 +12,4 @@ module.exports = (app) => {
     router.get("/:eventId", event_invites.list);
 
     app.use('/api/event/invite', router);
-}
+};

@@ -54,8 +54,8 @@ exports.create = (req, res) => {
     }
 
     //Validate location
-    let location = req.body.location.trim();
-    if (location.length < 3) {
+    let location = req.body.location.trim().split(',').forEach(element => Number(element));
+    if (location.length != 2 || location.every(element => isNaN(element))) {
         return res.status(400).send({
             message: "Invalid location."
         });
