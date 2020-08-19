@@ -4,15 +4,16 @@ const Club = db.club;
 const ClubInvite = db.clubInvite;
 
 exports.create = (req, res) => {
-  //require middleware
-
+  //User-ul cu rol atlet nu are permisiune sa creeze un club
   if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
+    //User-ul cu rol coach cand creaza un club devine owner
   } else if (req.authJwt.role_id == 2) {
     req.body.ownerId = req.authJwt.user_id;
   }
+
   const club = {
     name: req.body.name,
     owner_id: req.body.ownerId
@@ -21,7 +22,7 @@ exports.create = (req, res) => {
   var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   Club.create(club)
     .then(data => {
-      //invite members here
+      //Verify email and invite members
       req.body.invite_members.forEach(email => {
         if (regex.test(email)) {
           ClubInvite.create({
@@ -35,35 +36,38 @@ exports.create = (req, res) => {
     .catch(err => {
       return res.status(500).send({ message: err.message });
     });
-}
+};
 
 exports.update = (req, res) => {
   const id = req.params.clubId;
-  if(req.authJwt.role_id == 3) {
+
+  //Nu se permite altetului sa modifice un club
+  if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
-  } else if(req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
+    //Nu se permite unui coach sa modifice alt club decat unul propriu
+  } else if (req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
     return res.status(403).send({
       message: "Access denied."
     });
   } else {
     Club.update(req.body, { where: { id: id } })
-    .then(num => {
-      if (num == 1) {
-        return Club.findByPk(id);
-      } else {
-        return res.status(404).send({
-          message: "Club not found."
-        });
-      }
-    })
-    .then(data => {
-      return res.status(200).send(data);
-    })
-    .catch(err => {
-      return req.status(500).send({ message: err.message });
-    });
+      .then(num => {
+        if (num == 1) {
+          return Club.findByPk(id);
+        } else {
+          return res.status(404).send({
+            message: "Club not found."
+          });
+        }
+      })
+      .then(data => {
+        res.status(200).send(data);
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message });
+      });
   }
 };
 
@@ -73,10 +77,10 @@ exports.get = (req, res) => {
   } else {
     Club.findByPk(req.params.clubId)
       .then(data => {
-        return res.status(200).send(data);
+        res.status(200).send(data);
       })
       .catch(err => {
-        return res.status(500).send({ message: err.message });
+        res.status(500).send({ message: err.message });
       });
   }
 };
@@ -96,10 +100,10 @@ exports.search = (req, res) => {
       }
     })
       .then(data => {
-        return res.status(200).send(data);
+        res.status(200).send(data);
       })
       .catch(err => {
-        return res.status(500).send({ message: err.message });
+        res.status(500).send({ message: err.message });
       });
   }
 };

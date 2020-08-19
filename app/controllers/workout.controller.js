@@ -10,7 +10,6 @@ exports.create = (req, res) => {
   .then(eventData => {
       if(eventData == null) {
           res.status(404).send({
-
               message: "Event not found."
           });
       }
@@ -99,7 +98,6 @@ exports.update = (req, res) => {
    .then(eventData => {
        if(eventData == null) {
            res.status(404).send({
-
                message: "Event not found."
            });
        }

@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, Sequelize) => {
     const Club = require("./club.model.js")(sequelize, Sequelize);
     const Sport = require("./sport.model.js")(sequelize, Sequelize);
