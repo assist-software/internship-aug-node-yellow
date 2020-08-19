@@ -14,4 +14,4 @@ module.exports = (app) => {
     router.delete("/:workoutId", workouts.delete);
 
     app.use('/api/workout', router);
-}
+};

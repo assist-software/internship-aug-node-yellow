@@ -14,4 +14,4 @@ module.exports = app => {
     router.delete("/:eventId", events.delete);
 
     app.use('/api/event', router);
-}
+};

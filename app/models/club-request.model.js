@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
     const User = require("./user.model.js")(sequelize, Sequelize);
     const Club = require("./club.model.js")(sequelize, Sequelize);
-    const ClubRequest = sequelize.define("club_request", { //cu _ sau fara?
+    const ClubRequest = sequelize.define("club_request", {
         user_id: {
           type: Sequelize.INTEGER,
           references: {

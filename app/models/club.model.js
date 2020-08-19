@@ -1,6 +1,3 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
 module.exports = (sequelize, Sequelize) => {
     const User = require("./user.model.js")(sequelize, Sequelize);
     const Club = sequelize.define("club", {
@@ -14,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
                 model: User,
                 key: 'id'
             },
-            allowNull:true
+            allowNull: true
         }
     });
     return Club;

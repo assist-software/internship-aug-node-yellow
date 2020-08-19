@@ -3,7 +3,6 @@ const Event = db.event;
 const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
-const isBlob = require("is-blob");
 const sendMail = require("../utils/email.utils.js");
 const Op = require("sequelize");
 
@@ -54,8 +53,9 @@ exports.create = (req, res) => {
     }
 
     //Validate location
-    let location = req.body.location.trim().split(',').forEach(element => Number(element));
-    if (location.length != 2 || location.every(element => isNaN(element))) {
+    let location = req.body.location.trim();
+    let locationTest = req.body.location.trim().split(',').forEach(element => Number(element));
+    if (locationTest.length != 2 || locationTest.every(element => isNaN(element))) {
         return res.status(400).send({
             message: "Invalid location."
         });
@@ -183,8 +183,9 @@ exports.update = (req, res) => {
     }
 
     //Validate location
-    let location = req.body.location.trim();
-    if (location.length < 3) {
+    let location = req.body.location;
+    let locationTest = req.body.location.trim().split(',').forEach(element => Number(element));
+    if (locationTest.length != 2 || locationTest.every(element => isNaN(element))) {
         return res.status(400).send({
             message: "Invalid location."
         });
@@ -223,7 +224,7 @@ exports.update = (req, res) => {
 
     //Validate event_cover
     let event_cover = req.body.event_cover;
-    if (!isBlob(event_cover)) {
+    if (event_cover.type != "image/png" && event_cover.type != "image/jpeg") {
         return res.status(400).send({
             message: "Invalid event_cover"
         });
