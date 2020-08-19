@@ -1,25 +1,22 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-module.exports=(sequelize,Sequelize)=>{
+module.exports = (sequelize, Sequelize) => {
+  const Event = require("./event.model.js")(sequelize, Sequelize);
+  const EventInvite = sequelize.define('event_invite', {
+    // Model attributes are defined here
 
-const Event =require("./event.model.js")(sequelize, Sequelize);
-const EventInvite = sequelize.define('event_invite', {
-  // Model attributes are defined here
- 
-  email: {
-    type: DataTypes.STRING,
-    allowNull:false
-  },
-  event_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references:
-    {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    event_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references:
+      {
         model: Event,
-        key:'id'
+        key: 'id'
+      }
     }
-  }
-
-});
-return EventInvite;
+  });
+  return EventInvite;
 }
