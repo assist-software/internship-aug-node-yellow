@@ -1,5 +1,3 @@
-
-
 module.exports = (sequelize, Sequelize) => {
     const Club = require("./club.model.js")(sequelize, Sequelize);
     const ClubInvite = sequelize.define("club_invite", {
@@ -17,4 +15,4 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
     return ClubInvite;
-}
+};
