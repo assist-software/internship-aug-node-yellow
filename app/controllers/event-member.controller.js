@@ -1,6 +1,5 @@
 const db = require("../models");
 const EventMember = db.eventMember;
-//const Op = db.Op;
 
 exports.create = (req, res) => {
   //Validate request
@@ -30,8 +29,6 @@ exports.create = (req, res) => {
 
 exports.remove = (req, res) => {
     const id = req.params.inviteId;
-
-
     EventMember.destroy({
         where: {id: id}
     })
@@ -55,7 +52,6 @@ exports.remove = (req, res) => {
 
 exports.list = (req, res) => {
     const eventId = req.params.eventId;
-
     EventMember.findAll({
         where: {event_id: eventId}
     })
