@@ -1,16 +1,17 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+//const sequelize = new Sequelize('sqlite::memory:');
+
 module.exports = (sequelize, Sequelize) => {
 
     const Event = require("./event.model.js")(sequelize, Sequelize);
     const User = require("./user.model.js")(sequelize, Sequelize);
     const Workout = sequelize.define('workout', {
-        user_id:{
+        user_id: {
             type: DataTypes.INTEGER,
-            allowNull:false,
-            references:{
-                model:User,
-                key:'id'
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'id'
             }
         },
         duration: {
@@ -37,12 +38,12 @@ module.exports = (sequelize, Sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        event_id:{
+        event_id: {
             type: DataTypes.INTEGER,
-            allowNull:false,
-            references:{
-                model:Event,
-                key:'id'
+            allowNull: false,
+            references: {
+                model: Event,
+                key: 'id'
             }
         },
 

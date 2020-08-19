@@ -2,11 +2,9 @@ const db = require("../models");
 const ClubInvite = db.clubInvite;
 const ClubMember = db.clubMember;
 const User = db.user;
-const sendMail=require("../utils/email.utils.js");
-const { remove } = require("./event-member.controller");
 
-function deleteI(id){
-       ClubInvite.destroy({
+function deleteI(id) {
+    ClubInvite.destroy({
         where: { id: id }
     })
         .then(num => {
@@ -28,7 +26,6 @@ function deleteI(id){
 
 }
 exports.create = (req, res) => {
-    //Validate request
     var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!req.body.club_id || !regex.test(req.body.email)) {
         res.status(404).send({
@@ -41,73 +38,60 @@ exports.create = (req, res) => {
         club_id: req.body.club_id
     };
 
-    
+
     ClubInvite.create(clubInvite)
-   .then(data => {
-       res.status(200).send(data);
-   })
-   .catch(err => {
-       res.status(500).send({
-           message: err.message || "Some error occured while creating the clubMember"
-       })
-   });
+        .then(data => {
+            res.status(200).send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occured while creating the clubMember"
+            })
+        });
 };
 
 exports.accept = (req, res) => {
     const id = req.params.inviteId;
     ClubInvite.findByPk(id)
-    .then(data=>{
-        const mail=data.email;
-        sendMail.sendMail([mail],'Accepted','You was accepted in club');
-        User.findOne({
-            where: { email: mail }})
-            .then(date=>{
-                if(date===null)
-                    {
+        .then(data => {
+            const mail = data.email;
+            User.findOne({
+                where: { email: mail }
+            })
+                .then(date => {
+                    if (date === null) {
                         deleteI(id);
                         res.status(404).send({
-                                          message: `User with email:${mail} doesn't exist.`})
-                        
+                            message: `User with email:${mail} doesn't exist.`
+                        })
+
                     }
-                    else
-                    {
+                    else {
                         const clubMember = {
                             club_id: req.body.club_id,
                             user_id: date.id
-                
+
                         };
-                
-                        //Save clubMember in the db
+
                         ClubMember.create(clubMember)
                             .then(data => {
                                 res.status(200).send(data);
-                                
-                            })
-                            deleteI(id);
-                    }
-                    
-            });
-    }).catch(err=>{
-        res.status(500).send({
-            message: err.message || "Some error occured while creating the clubMember"
-        })})
-    
-    
 
-        
-   
- 
+                            })
+                        deleteI(id);
+                    }
+
+                });
+        }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occured while creating the clubMember"
+            })
+        })
 };
 
-
 exports.remove = (req, res) => {
-
-
-    
     const id = req.params.inviteId;
-
     deleteI(id);
-
 };
 
 exports.list = (req, res) => {
