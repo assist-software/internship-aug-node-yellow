@@ -207,8 +207,8 @@ exports.update = (req, res) => {
 
   const user = {
     gender: _gender,
-    primarySport: p_Sport,
-    secondarySport: s_Sport,
+    primarySport: primary_sport_id,
+    secondarySport: secondary_sport_id,
     height: _height,
     weight: _weight,
     age: _age
