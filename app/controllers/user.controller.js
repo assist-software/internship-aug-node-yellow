@@ -145,43 +145,15 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
 
-  let f_name = req.body.first_name;
-  let l_name = req.body.last_name;
   let _gender = req.body.gender;
   let p_Sport = req.body.primarySport;
   let s_Sport = req.body.secondarySport;
   let _height = req.body.height;
   let _weight = req.body.weight;
-  let password = req.body.password;
-  let confirm_password = req.body.confirm_password;
-
   let _age = req.body.age;
   let primary_sport_id;
   let secondary_sport_id;
 
-
-
-  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3))//|| f_name.trim().length != f_name.length)
-  {
-    return res.status(400).send({ message: "Invalid first name." });
-  }
-
-  if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
-    return res.status(400).send({ message: "Invalid last name." });
-  }
-  if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
-    return res.status(400).send({ message: "Invalid gender." });
-  }
-  if (password == null) {
-    return res.status(404).send({ message: "Password not found." });
-  }
-  if (confirm_password == null) {
-    return res.status(404).send({ message: "Password not found." });
-  }
-  if (confirm_password != password) {
-    return res.status(406).send({ message: "Password not acceptable." });
-
-  }
   if (p_Sport != null) {
     Sport.findOne({
       where: {
@@ -220,6 +192,9 @@ exports.update = (req, res) => {
         return res.status(500).send({ message: err.message });
       });
   }
+  if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
+    return res.status(400).send({ message: "Invalid gender." });
+  }
   if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
     return res.status(400).send({ message: "Invalid height." });
   }
@@ -231,19 +206,12 @@ exports.update = (req, res) => {
   }
 
   const user = {
-    first_name: f_name,
-    last_name: l_name,
-    email: req.body.email,
-    password: req.body.password,
-    confirm_password: req.body.confirm_password,
-    role_id: req.body.role,
     gender: _gender,
     primarySport: p_Sport,
     secondarySport: s_Sport,
     height: _height,
     weight: _weight,
-    age: _age,
-    profile_photo: req.body.profile_photo
+    age: _age
   };
   User.update(user, {
     where: {
