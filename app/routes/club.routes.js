@@ -8,6 +8,8 @@ module.exports = app => {
     router.post("/search", clubs.search);
 
     router.get("/:clubId", clubs.get);
+    
+    router.get("/", clubs.list);
 
     router.put("/:clubId", clubs.update);
 
