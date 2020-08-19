@@ -5,11 +5,13 @@ module.exports = app => {
 
     router.post("/create", users.create);
 
-    router.put("/:userId", users.update);
+    router.put("/update/:userId", users.update);
 
     router.get("/:userId", users.get);
 
-    router.post("/search", users.search);
+    router.get("/search/:role_id", users.search);
+    //router.get("/search/:roleId", users.search);
+
 
     router.delete("/:userId", users.delete);
 

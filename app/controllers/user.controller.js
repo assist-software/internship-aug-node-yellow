@@ -95,9 +95,8 @@ exports.create = (req, res) => {
   if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
     return res.status(400).send({ message: "Invalid age." });
   }
-  if(p_photo != null && p_photo.type != "image/png" && p_photo.type != "image/jpg")
-  {
-    return res.status(400).send( { message : "Invalid image." });
+  if (p_photo != null && p_photo.type != "image/png" && p_photo.type != "image/jpg") {
+    return res.status(400).send({ message: "Invalid image." });
   }
   User.findOne({
     where: {
@@ -151,85 +150,104 @@ exports.update = (req, res) => {
   let _height = req.body.height;
   let _weight = req.body.weight;
   let _age = req.body.age;
-  let primary_sport_id;
-  let secondary_sport_id;
-
-  if (p_Sport != null) {
-    Sport.findOne({
-      where: {
-        type: p_Sport
-      }
-    })
-      .then(data => {
-        if (data == null) {
-          return res.status(404).send({
-            message: "sportType not found."
-          });
-        } else {
-          primary_sport_id = data.id;
+  let primary_sport_id = null;
+  let secondary_sport_id = null;
+  var p1 = new Promise((ress, rej) => {
+    if (p_Sport != null) {
+      Sport.findOne({
+        where: {
+          type: p_Sport
         }
       })
-      .catch(err => {
-        return res.status(500).send({ message: err.message });
-      });
-  }
-  if (s_Sport != null) {
-    Sport.findOne({
-      where: {
-        type: s_Sport
-      }
-    })
-      .then(data => {
-        if (data == null) {
-          return res.status(404).send({
-            message: "sportType not found."
-          });
-        } else {
-          secondary_sport_id = data.id;
+        .then(data => {
+          if (data == null) {
+            rej("");
+            return res.status(404).send({
+              message: "sportType not found."
+
+            });
+          } else {
+            primary_sport_id = data.id;
+
+            ress("");
+
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({ message: err.message });
+        });
+    } else ress("");
+  });
+  var p2 = new Promise((ress, rej) => {
+    if (s_Sport != null) {
+      Sport.findOne({
+        where: {
+          type: s_Sport
         }
       })
-      .catch(err => {
-        return res.status(500).send({ message: err.message });
-      });
-  }
-  if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
-    return res.status(400).send({ message: "Invalid gender." });
-  }
-  if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
-    return res.status(400).send({ message: "Invalid height." });
-  }
-  if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
-    return res.status(400).send({ message: "Invalid weight." });
-  }
-  if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
-    return res.status(400).send({ message: "Invalid age." });
-  }
+        .then(data => {
+          if (data == null) {
+            rej("");
+            return res.status(404).send({
+              message: "sportType not found."
+            });
+          } else {
+            secondary_sport_id = data.id;
 
-  const user = {
-    gender: _gender,
-    primarySport: primary_sport_id,
-    secondarySport: secondary_sport_id,
-    height: _height,
-    weight: _weight,
-    age: _age
-  };
-  User.update(user, {
-    where: {
-      id: req.params.userId
+            ress("");
+
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({ message: err.message });
+        });
     }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.status(200).send("User updated successfully !");
-      }
-      else {
-        res.status(404).send("User not found.")
+    else rej("");
+  });
+
+  Promise.all([p1, p2]).then(v => {
+    if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
+      return res.status(400).send({ message: "Invalid gender." });
+    }
+    if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
+      return res.status(400).send({ message: "Invalid height." });
+    }
+    if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
+      return res.status(400).send({ message: "Invalid weight." });
+    }
+    if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
+      return res.status(400).send({ message: "Invalid age." });
+    }
+
+
+    const user = {
+      gender: _gender,
+      primary_sport_id: primary_sport_id,
+      secondary_sport_id: secondary_sport_id,
+      height: _height,
+      weight: _weight,
+      age: _age
+    };
+    User.update(user, {
+      where: {
+        id: req.params.userId
       }
     })
+      .then(num => {
+        if (num == 1) {
+          res.status(200).send("User updated successfully !");
+        }
+        else {
+          res.status(404).send("User not found.")
+        }
+      })
+
+  }).catch(error => console.log(`Error in promises ${error}`))
 };
+
 exports.get = (req, res) => {
   if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
+    return res.status(403).send({ message: "Permission denied. gsdfs" });
   } else {
     User.findByPk(req.params.userId)
       .then(data => {
@@ -243,26 +261,27 @@ exports.get = (req, res) => {
 
 exports.search = (req, res) => {
 
-  if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
-  } else {
-    User.findAll({
-      where: {
-        first_name: {
-          [Op.ilike]: `%${req.body.first_name}%`
-        },
-        role_id: {
-          [Op.ilike]: `%${req.body.roleId}%`
-        }
-      }
-    }).
-      then(data => {
-        return res.status(200).send(data);
-      })
-      .catch(err => {
-        return res.status(500).send({ message: err.message });
-      })
-  }
+  // if (req.authJwt == null) {
+  //   return res.status(403).send({ message: "Permission denied ." });
+  // } else {
+  User.findAll({
+    where: {
+      role_id: req.params.role_id
+      /* first_name: {
+         [Op.ilike]: `%${req.body.first_name}%`
+       },
+       role_id: {
+         [Op.ilike]: `%${req.body.roleId}%`
+       }*/
+    }
+  }).
+    then(data => {
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
+  //}
 };
 
 
