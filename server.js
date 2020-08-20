@@ -3,8 +3,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 //const db = require("./app/models");
 const db = require("./app/models/index");
-
-
+var bcrypt = require("bcryptjs");
+//const User = db.user;
+//const Sport = db.sport;
+//const Role = db.role;
 const app = express();
 
 const corsOptions = {
@@ -19,8 +21,8 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
-//db.sequelize.sync({ force: true });
-db.sequelize.sync(); 
+db.sequelize.sync({ force: true });
+//db.sequelize.sync(); 
 
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
@@ -67,7 +69,7 @@ User.sync().then(() => {
   });
 });
 ///////////////////////////// 
-*/
+
 const Sport = db.sequelize.define('sport', {
   type: { type: db.Sequelize.STRING }
 });
@@ -83,7 +85,6 @@ Sport.sync().then(() => {
   Sport.create({
     type: 'Tennis',
   });
-
   Sport.create({
     type: 'Football',
   });
@@ -134,7 +135,7 @@ Event.sync().then(()=>{
   });
 });
 
-*/
+/*
 const ClubInvite = db.sequelize.define("clubInvite", {
   email: { type: db.Sequelize.STRING },
   club_id: { type: db.Sequelize.INTEGER }
@@ -146,7 +147,50 @@ ClubInvite.sync().then(()=>{
     email:'test1@test.com',
     club_id:2
   });
-});
+});*/
+// const User = db.sequelize.define('user', {
+//   first_name:{type: db.Sequelize.STRING},
+//   last_name:{type: db.Sequelize.STRING},
+//   email: { type: db.Sequelize.STRING },
+//   password: { type: db.Sequelize.STRING },
+//   role_id: { type: db.Sequelize.INTEGER },
+//   gender:{type: db.Sequelize.STRING},
+  
+//  });
+//  User.sync().then(() => {
+//   User.create({
+//   first_name:"Admin",
+//   last_name:"Yellow",
+//   email: 'admin@test.com',
+//   password: bcrypt.hashSync('asd123', 8),
+//   role_id: 1,
+//   gender:"male",
+//   primary_sport_id: null,
+//   secondary_sport_id: null,
+//   height:null,
+//   weight:null,
+//   age: null,
+//   profile_photo: null
+
+  
+  
+//   });
+//   User.create({
+//   first_name:"Coach",
+//   last_name:"Yellow",
+//   email: 'coach@test.com',
+//   password: bcrypt.hashSync('asd123', 8),
+//   role_id: 2,
+//   gender:"male",
+//   primary_sport_id: null,
+//   secondary_sport_id: null,
+//   height:null,
+//   weight:null,
+//   age: null,
+//   profile_photo: null
+  
+//   });
+//  });
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Hello world!" });

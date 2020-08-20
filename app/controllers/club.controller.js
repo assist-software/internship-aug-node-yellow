@@ -19,7 +19,8 @@ exports.create = (req, res) => {
 
   const club = {
     name: req.body.name,
-    owner_id: req.body.ownerId
+    owner_id: req.body.ownerId,
+    sport_id:req.body.sport_id
   };
 
   var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,17 +45,17 @@ exports.create = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.clubId;
 
-  //Nu se permite altetului sa modifice un club
-  if (req.authJwt.role_id == 3) {
-    return res.status(403).send({
-      message: "Access denied."
-    });
-    //Nu se permite unui coach sa modifice alt club decat unul propriu
-  } else if (req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
-    return res.status(403).send({
-      message: "Access denied."
-    });
-  } else {
+  // //Nu se permite altetului sa modifice un club
+  // if (req.authJwt.role_id == 3) {
+  //   return res.status(403).send({
+  //     message: "Access denied."
+  //   });
+  //   //Nu se permite unui coach sa modifice alt club decat unul propriu
+  // } else if (req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
+  //   return res.status(403).send({
+  //     message: "Access denied."
+  //   });
+  // } else {
     Club.update(req.body, { where: { id: id } })
       .then(num => {
         if (num == 1) {
@@ -71,7 +72,7 @@ exports.update = (req, res) => {
       .catch(err => {
         res.status(500).send({ message: err.message });
       });
-  }
+  //}
 };
 
 exports.get = (req, res) => {
@@ -89,27 +90,43 @@ exports.get = (req, res) => {
 };
 
 exports.search = (req, res) => {
-  if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
-  } else {
-    Club.findAll({
-      where: {
-        name: {
-          [Op.ilike]: `%${req.body.name}%`
-        },
-        owner_id: {
-          [Op.ilike]: `%${req.body.ownerId}%`
-        }
-      }
-    })
-      .then(data => {
-        res.status(200).send(data);
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
-      });
-  }
-};
+ 
+  // if (req.authJwt == null) {
+  // return res.status(403).send({ message: "Permission denied ." });
+  // } else {
+  //const c
+  const t={
+  _user:null,
+  _clubs:null
+   }
+  User.findAll({
+  where: {
+  role_id: req.params.role_id
+   }
+   }).
+  then(data => {
+  if(data==null)
+  return res.status(404).send({message: "Not found "});
+  else{
+  var list=data.map(obj=>{
+  t._user=obj;
+  Club.findAll({where:{owner_id: obj.id }})
+   .then(clubs=>{
+  t._clubs=clubs;
+   })
+   
+  return t
+   })
+   
+  console.log(data);
+  return res.status(200).send(list);
+   }
+   })
+   .catch(err => {
+  return res.status(500).send({ message: err.message });
+   })
+  //}
+  };
 
 
 exports.delete = (req, res) => {
