@@ -144,6 +144,8 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
 
+  //let f_name = req.body.first_name;
+  //let l_name = req.body.last_name;
   let _gender = req.body.gender;
   let p_Sport = req.body.primarySport;
   let s_Sport = req.body.secondarySport;
@@ -221,6 +223,8 @@ exports.update = (req, res) => {
 
 
     const user = {
+      //first_name:f_name,
+      //last_name: l_name,
       gender: _gender,
       primary_sport_id: primary_sport_id,
       secondary_sport_id: secondary_sport_id,
