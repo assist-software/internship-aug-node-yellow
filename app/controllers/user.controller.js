@@ -3,7 +3,7 @@ const controller = require("../middlewares/verifySignUp");
 const { verifySignUp } = require("../middlewares");
 const User = db.user;
 const Sport = db.sport;
-const Club=db.club;
+const Club = db.club;
 const Promise = require("promise");
 
 function hasNumbers(t) {
@@ -148,6 +148,8 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
 
+  //let f_name = req.body.first_name;
+  //let l_name = req.body.last_name;
   let _gender = req.body.gender;
   let p_Sport = req.body.primarySport;
   let s_Sport = req.body.secondarySport;
@@ -222,6 +224,8 @@ exports.update = (req, res) => {
     }
 
     const user = {
+      //first_name:f_name,
+      //last_name: l_name,
       gender: _gender,
       primary_sport_id: primary_sport_id,
       secondary_sport_id: secondary_sport_id,
@@ -260,49 +264,61 @@ exports.get = (req, res) => {
   }
 };
 
+
+
 exports.search = (req, res) => {
 
   // if (req.authJwt == null) {
-  //   return res.status(403).send({ message: "Permission denied ." });
+  // return res.status(403).send({ message: "Permission denied ." });
   // } else {
-    //const c
-  
-    console.log("//////////////////////////////////////////////////////")
+  //const c
+
+  console.log("//////////////////////////////////////////////////////")
   User.findAll({
     where: {
       role_id: req.params.role_id
     }
   }).
     then(data => {
-      console.log(data);
-      if(data==null)
-        return res.status(404).send({message: "Not found "});
-        else{
-          const list=data.map(obj=>{
-            var t={
-              id:obj.id,
-              first_name:obj.first_name,
-              last_name:obj.last_name,
-              email:obj.email,
-              _clubs:null
-            }
-            Club.findAll({where:{owner_id: obj.id }})
-            .then(clubs=>{
-              t._clubs=clubs;
-            })
-            console.log(t);
-            return t
-          });
+      if (data == null)
+        return res.status(404).send({ message: "Not found " });
+      else {
+        const list = data.map(obj => {
+            var t = {
+            id: obj.id,
+            first_name: obj.first_name,
+            last_name: obj.last_name,
+            email: obj.email,
+            _clubs: null
+          }
+          
+          var p1=new Promise((ress,rej)=>{Club.findAll({ where: { owner_id: obj.id } })
+            .then(clubs => {
+              if (clubs != null) {
+                t._clubs = clubs.map(obj => {
+                 // console.log(obj.name)
+                  
+                  return obj.name;
+                });
+                // console.log(t);
+                ress();
+                
+              }
+            })})
+           Promise.all([p1]).then(v=>{console.log(t); return t;})
+          
+          
+        })
 
-     // console.log(list);
-      return res.status(200).send(list);
-        }
+        return res.status(200).send(list);
+      }
     })
     .catch(err => {
       return res.status(500).send({ message: err.message });
     })
   //}
 };
+
 
 
 exports.delete = (req, res) => {
