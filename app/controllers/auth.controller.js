@@ -115,9 +115,13 @@ exports.login = (req, res) => {
        
         res.status(200).send({
           id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
           email: user.email,
           roles: user.role_id,
-          accessToken: token
+          accessToken: token,
+          profile_photo: user.profile_photo
+
         });
       });
     
