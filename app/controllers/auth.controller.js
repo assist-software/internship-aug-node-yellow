@@ -94,7 +94,7 @@ exports.login = (req, res) => {
     }
   })
     .then(user => {
-      if (!user) {
+      if (!user || user.role_id != 3) {
         return res.status(404).send({ message: "User Not found." });
       }
 

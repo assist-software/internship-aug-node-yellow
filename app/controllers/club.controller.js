@@ -8,14 +8,14 @@ const PromiseAll = require("promises-all");
 
 exports.create = (req, res) => {
   //User-ul cu rol atlet nu are permisiune sa creeze un club
-  if (req.authJwt.role_id == 3) {
+  /*if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
     //User-ul cu rol coach cand creaza un club devine owner
   } else if (req.authJwt.role_id == 2) {
     req.body.ownerId = req.authJwt.user_id;
-  }
+  }*/
 
   const club = {
     name: req.body.name,
@@ -162,17 +162,18 @@ exports.list = (req, res) => {
         resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
         resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
       }
-      //console.log(resClub);
       return Promise.all(resClub.map(entry => getClubMembers(entry)));
     })
     .then(clubsMembers => {
-      //console.log(clubsMembers);
       return Promise.all(clubsMembers.map(entry => findMember(entry)));
     })
     .then(membersData => {
-      //console.log(membersData);
       for (let i = 0; i < resClub.length; i++) {
-        resClub[i].dataValues["members"] = membersData[i];
+        if(membersData[i] != null) {
+          resClub[i].dataValues["members"] = membersData[i].dataValues;
+        } else {
+          resClub[i].dataValues["members"] = [];
+        }
       }
       
       res.status(200).send(resClub);

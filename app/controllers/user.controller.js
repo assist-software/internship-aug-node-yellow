@@ -3,6 +3,8 @@ const controller = require("../middlewares/verifySignUp");
 const { verifySignUp } = require("../middlewares");
 const User = db.user;
 const Sport = db.sport;
+const Club = db.club;
+
 
 function hasNumbers(t) {
   var regex = /\d/g;
@@ -263,16 +265,15 @@ exports.get = (req, res) => {
   }
 };
 
+
+
 exports.search = (req, res) => {
 
   // if (req.authJwt == null) {
   // return res.status(403).send({ message: "Permission denied ." });
   // } else {
   //const c
-  const t = {
-    _user: null,
-    _clubs: null
-  }
+
   User.findAll({
     where: {
       role_id: req.params.role_id
@@ -282,14 +283,24 @@ exports.search = (req, res) => {
       if (data == null)
         return res.status(404).send({ message: "Not found " });
       else {
+        const t = {
+          id: null,
+          first_name: null,
+          last_name: null,
+          email: null,
+          _clubs: null
+        }
         var list = data.map(obj => {
-          t._user = obj;
+          t.id = obj.id;
+          t.first_name = obj.first_name;
+          t.last_name = obj.last_name;
+          t.email = obj.email;
           Club.findAll({ where: { owner_id: obj.id } })
             .then(clubs => {
               t._clubs = clubs;
             })
 
-          return t
+          return t;
         })
 
         console.log(data);
@@ -301,6 +312,7 @@ exports.search = (req, res) => {
     })
   //}
 };
+
 
 
 exports.delete = (req, res) => {

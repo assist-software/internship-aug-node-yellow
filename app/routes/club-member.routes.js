@@ -10,4 +10,4 @@ module.exports = app => {
   router.get("/:clubId", club_members.list);
 
   app.use('/api/club/member', router);
-}
+};
