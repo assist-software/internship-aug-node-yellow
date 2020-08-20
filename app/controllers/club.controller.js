@@ -162,20 +162,30 @@ exports.list = (req, res) => {
         resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
         resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
       }
-      return Promise.all(resClub.map(entry => getClubMembers(entry.dataValues)));
+      return Promise.all(resClub.map(entry => getClubMembers(entry)));
     })
     .then(clubsMembers => {
-      return Promise.all(clubsMembers.map(clubMembers => clubMembers.map(member => findMember(member.dataValues))));
+      return Promise.all(clubsMembers.map((clubMembers) => clubMembers.map((member) => findMember(member))))
+
     })
     .then(membersData => {
+      return Promise.all(...membersData)
+      
+    })
+    .then(membersData => {
+      console.log(membersData);
+      console.log(resClub.length);
       for (let i = 0; i < resClub.length; i++) {
+        console.log(membersData);
+        console.log(i);
         if(membersData[i] != null) {
-          resClub[i].dataValues["members"] = membersData[i].dataValues;
+          resClub[i].dataValues["members"] = membersData[i];
+          console.log(membersData[i]);
         } else {
           resClub[i].dataValues["members"] = [];
         }
       }
-      
+      console.log(membersData);
       res.status(200).send(resClub);
     })
     .catch(err => {

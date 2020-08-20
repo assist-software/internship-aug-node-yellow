@@ -270,42 +270,43 @@ exports.get = (req, res) => {
 exports.search = (req, res) => {
 
   // if (req.authJwt == null) {
-  // return res.status(403).send({ message: "Permission denied ." });
+  //   return res.status(403).send({ message: "Permission denied ." });
   // } else {
-  //const c
+    //const c
 
+    //console.log("//////////////////////////////////////////////////////")
   User.findAll({
     where: {
       role_id: req.params.role_id
     }
   }).
     then(data => {
-      if (data == null)
-        return res.status(404).send({ message: "Not found " });
-      else {
-        const t = {
-          id: null,
-          first_name: null,
-          last_name: null,
-          email: null,
-          _clubs: null
-        }
-        var list = data.map(obj => {
-          t.id = obj.id;
-          t.first_name = obj.first_name;
-          t.last_name = obj.last_name;
-          t.email = obj.email;
-          Club.findAll({ where: { owner_id: obj.id } })
-            .then(clubs => {
-              t._clubs = clubs;
+      if(data==null)
+        return res.status(404).send({message: "Not found "});
+        else{
+          const list=data.map(obj=>{
+            var t={
+              id:null,
+              first_name:null,
+              last_name:null,
+              email:null,
+              _clubs:null
+            }
+            t.id=obj.id;
+            t.first_name=obj.first_name;
+            t.last_name=obj.last_name;
+            t.email=obj.email;
+            Club.findAll({where:{owner_id: obj.id }})
+            .then(clubs=>{
+              t._clubs=clubs;
             })
+           // console.log(t);
+            return t
+          });
 
-          return t;
-        })
-
-        console.log(data);
-        return res.status(200).send(list);
-      }
+     // console.log(list);
+      return res.status(200).send(list);
+        }
     })
     .catch(err => {
       return res.status(500).send({ message: err.message });
