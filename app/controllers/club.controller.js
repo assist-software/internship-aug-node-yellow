@@ -149,44 +149,50 @@ exports.list = (req, res) => {
   function findMember(user) {
     return User.findByPk(user.user_id);
   }
-
-  Club.findAll({
-    where: null
-  })
-    .then(data => {
-      resClub = data;
-      return Promise.all(data.map(entry => getOwner(entry)));
-    })
-    .then(usersData => {
-      for (let i = 0; i < resClub.length; i++) {
-        resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
-        resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
-      }
-      return Promise.all(resClub.map(entry => getClubMembers(entry)));
-    })
-    .then(clubsMembers => {
-      return Promise.all(clubsMembers.map(clubMembers => clubMembers.map(member => findMember(member))));
-    })
-    .then(membersData => {
-      return Promise.all(...membersData);
-    })
-    .then(membersData => {
-      console.log(membersData);
-      for (let i = 0; i < resClub.length; i++) {
-        if(membersData[i] != null) {
-          resClub[i].dataValues["members"] = membersData[i].dataValues;
-          console.log(i);
-          console.log(membersData[i]);
-        } else {
-          resClub[i].dataValues["members"] = [];
-        }
-      }
+ Club.findAll({include: [{all: true, nested:true}]})
+ .then(test => {
+   console.log(test);
+ })
+ .catch(err => {
+   console.error(err);
+ });
+  // Club.findAll({
+  //   where: null
+  // })
+  //   .then(data => {
+  //     resClub = data;
+  //     return Promise.all(data.map(entry => getOwner(entry)));
+  //   })
+  //   .then(usersData => {
+  //     for (let i = 0; i < resClub.length; i++) {
+  //       resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
+  //       resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
+  //     }
+  //     return Promise.all(resClub.map(entry => getClubMembers(entry)));
+  //   })
+  //   .then(clubsMembers => {
+  //     return Promise.all(clubsMembers.map(clubMembers => clubMembers.map(member => findMember(member))));
+  //   })
+  //   .then(membersData => {
+  //     return Promise.all(...membersData);
+  //   })
+  //   .then(membersData => {
+  //     console.log(membersData);
+  //     for (let i = 0; i < resClub.length; i++) {
+  //       if(membersData[i] != null) {
+  //         resClub[i].dataValues["members"] = membersData[i].dataValues;
+  //         console.log(i);
+  //         console.log(membersData[i]);
+  //       } else {
+  //         resClub[i].dataValues["members"] = [];
+  //       }
+  //     }
       
-      res.status(200).send(resClub);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message
-      });
-    });
+  //     res.status(200).send(resClub);
+  //   })
+  //   .catch(err => {
+  //     res.status(500).send({
+  //       message: err.message
+  //     });
+  //   });
 };
