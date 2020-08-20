@@ -88,7 +88,7 @@ exports.create = (req, res) => {
         return res.status(500).send({ message: err.message });
       });
   }
-  if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
+  if (_height != null && (isNaN(_height) || _height < 50 || _height > 300)) {
     return res.status(400).send({ message: "Invalid height." });
   }
   if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
@@ -272,6 +272,7 @@ exports.search = (req, res) => {
   // return res.status(403).send({ message: "Permission denied ." });
   // } else {
   //const c
+<<<<<<< HEAD
 
  //if (coach) {
   const list=Club.findAll({
@@ -327,6 +328,39 @@ exports.search = (req, res) => {
   //     return res.status(500).send({ message: err.message });
   //   })
 
+=======
+  const t = {
+    _user: null,
+    _clubs: null
+  }
+  User.findAll({
+    where: {
+      role_id: req.params.role_id
+    }
+  }).
+    then(data => {
+      if (data == null)
+        return res.status(404).send({ message: "Not found " });
+      else {
+        var list = data.map(obj => {
+          t._user = obj;
+          Club.findAll({ where: { owner_id: obj.id } })
+            .then(clubs => {
+              t._clubs = clubs;
+            })
+
+          return t
+        })
+
+        console.log(data);
+        return res.status(200).send(list);
+      }
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
+  //}
+>>>>>>> c49d37581607c3e506d56888e41d92a5f385f00a
 };
 
 
