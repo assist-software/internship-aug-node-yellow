@@ -21,74 +21,74 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
-db.sequelize.sync({ force: true });
-//db.sequelize.sync(); 
+//db.sequelize.sync({ force: true });
+db.sequelize.sync(); 
 
-const Role = db.sequelize.define('role', {
-  name: { type: db.Sequelize.STRING },
-  isAdmin: { type: db.Sequelize.BOOLEAN }
-});
-Role.sync().then(() => {
-  Role.create({
-    name: 'Admin',
-    isAdmin: true
-  });
-  Role.create({
-    name: 'Coach',
-    isAdmin: false
-  });
-  Role.create({
-    name: 'Athlete',
-    isAdmin: false
-  });
-});
+// const Role = db.sequelize.define('role', {
+//   name: { type: db.Sequelize.STRING },
+//   isAdmin: { type: db.Sequelize.BOOLEAN }
+// });
+// Role.sync().then(() => {
+//   Role.create({
+//     name: 'Admin',
+//     isAdmin: true
+//   });
+//   Role.create({
+//     name: 'Coach',
+//     isAdmin: false
+//   });
+//   Role.create({
+//     name: 'Athlete',
+//     isAdmin: false
+//   });
+// });
 /*
 ////////////////////////////////
+*/
+// const User = db.sequelize.define('user', {
+//   email: { type: db.Sequelize.STRING },
+//   password: { type: db.Sequelize.STRING },
+//   role_id: { type: db.Sequelize.INTEGER }
 
-const User = db.sequelize.define('user', {
-  email: { type: db.Sequelize.STRING },
-  password: { type: db.Sequelize.STRING },
-  role_id: { type: db.Sequelize.INTEGER }
-
-});
-User.sync().then(() => {
-  User.create({
-    email: 'andrei.seby45@yahoo.com',
-    password: 'true',
-    role_id: 1
-  });
-  User.create({
-    email: 'test2@test.com',
-    password: 'asd',
-    role_id: 2
-  });
-  User.create({
-    email: 'test3@test.com',
-    password: '123',
-    role_id: 3
-  });
-});
+// });
+// User.sync().then(() => {
+//   User.create({
+//     email: 'andrei.seby45@yahoo.com',
+//     password: 'true',
+//     role_id: 3
+//   });
+//   User.create({
+//     email: 'test2@test.com',
+//     password: 'asd',
+//     role_id: 3
+//   });
+//   User.create({
+//     email: 'test3@test.com',
+//     password: '123',
+//     role_id: 3
+//   });
+// });
 ///////////////////////////// 
 
-const Sport = db.sequelize.define('sport', {
-  type: { type: db.Sequelize.STRING }
-});
-Sport.sync().then(() => {
-  Sport.create({
-    type: 'Running',
-  });
+// const Sport = db.sequelize.define('sport', {
+//   type: { type: db.Sequelize.STRING }
+// });
+// Sport.sync().then(() => {
+//   Sport.create({
+//     type: 'Running',
+//   });
 
-  Sport.create({
-    type: 'Cycling',
-  });
+//   Sport.create({
+//     type: 'Cycling',
+//   });
 
-  Sport.create({
-    type: 'Tennis',
-  });
-  Sport.create({
-    type: 'Football',
-  });
-});
+//   Sport.create({
+//     type: 'Tennis',
+//   });
+//   Sport.create({
+//     type: 'Football',
+//   });
+// });
 /*
 //////////////////////////
 const Club = db.sequelize.define('club', {
@@ -155,6 +155,12 @@ ClubInvite.sync().then(()=>{
 //   password: { type: db.Sequelize.STRING },
 //   role_id: { type: db.Sequelize.INTEGER },
 //   gender:{type: db.Sequelize.STRING},
+//   primary_sport_id: { type: db.Sequelize.INTEGER },
+//   secondary_sport_id: { type: db.Sequelize.INTEGER },
+//   height:{ type: db.Sequelize.INTEGER },
+//   weight:{ type: db.Sequelize.INTEGER },
+//   age: { type: db.Sequelize.INTEGER },
+//   profile_photo: { type: db.Sequelize.BLOB}
   
 //  });
 //  User.sync().then(() => {
