@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
 //db.sequelize.sync({ force: true });
 db.sequelize.sync(); 
-/*
+
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
   isAdmin: { type: db.Sequelize.BOOLEAN }
@@ -40,6 +40,7 @@ Role.sync().then(() => {
     isAdmin: false
   });
 });
+/*
 ////////////////////////////////
 
 const User = db.sequelize.define('user', {
@@ -65,23 +66,29 @@ User.sync().then(() => {
     role_id: 3
   });
 });
-/////////////////////////////
+///////////////////////////// 
+*/
 const Sport = db.sequelize.define('sport', {
   type: { type: db.Sequelize.STRING }
 });
 Sport.sync().then(() => {
   Sport.create({
-    type: 'fotbal american',
+    type: 'Running',
   });
 
   Sport.create({
-    type: 'fotbal feminin',
+    type: 'Cycling',
   });
 
   Sport.create({
-    type: 'fotbal masculin',
+    type: 'Tennis',
+  });
+
+  Sport.create({
+    type: 'Football',
   });
 });
+/*
 //////////////////////////
 const Club = db.sequelize.define('club', {
   name: { type: db.Sequelize.STRING },
