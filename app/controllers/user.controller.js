@@ -88,7 +88,7 @@ exports.create = (req, res) => {
         return res.status(500).send({ message: err.message });
       });
   }
-  if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
+  if (_height != null && (isNaN(_height) || _height < 50 || _height > 300)) {
     return res.status(400).send({ message: "Invalid height." });
   }
   if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
@@ -269,11 +269,13 @@ exports.get = (req, res) => {
 exports.search = (req, res) => {
 
   // if (req.authJwt == null) {
-  //   return res.status(403).send({ message: "Permission denied ." });
+  // return res.status(403).send({ message: "Permission denied ." });
   // } else {
-    //const c
-
-    //console.log("//////////////////////////////////////////////////////")
+  //const c
+  const t = {
+    _user: null,
+    _clubs: null
+  }
   User.findAll({
     where: {
       role_id: req.params.role_id
@@ -283,33 +285,17 @@ exports.search = (req, res) => {
       if (data == null)
         return res.status(404).send({ message: "Not found " });
       else {
-        const list = data.map(obj => {
-            var t = {
-            id: obj.id,
-            first_name: obj.first_name,
-            last_name: obj.last_name,
-            email: obj.email,
-            _clubs: null
-          }
-          
-          var p1=new Promise((ress,rej)=>{Club.findAll({ where: { owner_id: obj.id } })
+        var list = data.map(obj => {
+          t._user = obj;
+          Club.findAll({ where: { owner_id: obj.id } })
             .then(clubs => {
-              if (clubs != null) {
-                t._clubs = clubs.map(obj => {
-                 // console.log(obj.name)
-                  
-                  return obj.name;
-                });
-                // console.log(t);
-                ress();
-                
-              }
-            })})
-           Promise.all([p1]).then(v=>{console.log(t); return t;})
-          
-          
+              t._clubs = clubs;
+            })
+
+          return t
         })
 
+        console.log(data);
         return res.status(200).send(list);
       }
     })
