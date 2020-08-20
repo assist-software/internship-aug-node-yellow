@@ -273,50 +273,60 @@ exports.search = (req, res) => {
   // } else {
   //const c
 
-  console.log("//////////////////////////////////////////////////////")
-  User.findAll({
-    where: {
-      role_id: req.params.role_id
-    }
-  }).
-    then(data => {
-      if (data == null)
-        return res.status(404).send({ message: "Not found " });
-      else {
-        const list = data.map(obj => {
-            var t = {
-            id: obj.id,
-            first_name: obj.first_name,
-            last_name: obj.last_name,
-            email: obj.email,
-            _clubs: null
-          }
+ //if (coach) {
+  const list=Club.findAll({
+    
+    include: User
+  }).then(data=>{
+    console.log(data);
+    return data;
+  })
+  console.log(list);
+ //}
+  // console.log("//////////////////////////////////////////////////////")
+  // User.findAll({
+  //   where: {
+  //     role_id: req.params.role_id
+  //   }
+  // }).
+  //   then(data => {
+  //     if (data == null)
+  //       return res.status(404).send({ message: "Not found " });
+  //     else {
+  //       const list = data.map(obj => {
+  //           var t = {
+  //           id: obj.id,
+  //           first_name: obj.first_name,
+  //           last_name: obj.last_name,
+  //           email: obj.email,
+  //           _clubs: null
+  //         }
           
-          var p1=new Promise((ress,rej)=>{Club.findAll({ where: { owner_id: obj.id } })
-            .then(clubs => {
-              if (clubs != null) {
-                t._clubs = clubs.map(obj => {
-                 // console.log(obj.name)
+  //         var p1=new Promise((ress,rej)=>{Club.findAll({ where: { owner_id: obj.id } })
+  //           .then(clubs => {
+  //             if (clubs != null) {
+  //               t._clubs = clubs.map(obj => {
+  //                // console.log(obj.name)
                   
-                  return obj.name;
-                });
-                // console.log(t);
-                ress();
+  //                 return obj.name;
+  //               });
+  //               // console.log(t);
+  //               ress();
                 
-              }
-            })})
-           Promise.all([p1]).then(v=>{console.log(t); return t;})
+  //             }
+  //           })})
+  //          Promise.all([p1]).then(v=>{console.log(t); return t;})
           
           
-        })
+  //       })
 
-        return res.status(200).send(list);
-      }
-    })
-    .catch(err => {
-      return res.status(500).send({ message: err.message });
-    })
-  //}
+  //       return res.status(200).send(list);
+  //     }
+  //   })
+  //   .catch(err => {
+  //     return res.status(500).send({ message: err.message });
+  //   })
+
 };
 
 
