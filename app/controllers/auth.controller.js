@@ -12,7 +12,7 @@ var bcrypt = require("bcryptjs");
 exports.register = (req, res) => {
  
   var regex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
-console.log(authJwt.role_id);
+//console.log(authJwt.role_id);
 if(!regex.test(req.body.email)){
 return res.status(400).send({ message: "Invalid email" });
 }
