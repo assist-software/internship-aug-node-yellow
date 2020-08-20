@@ -2,8 +2,9 @@ const db = require("../models");
 const Op = require("sequelize");
 const Club = db.club;
 const ClubInvite = db.clubInvite;
-const ClubMembers = db.clubMembers;
+const ClubMember = db.clubMember;
 const User = db.user;
+const PromiseAll = require("promises-all");
 
 exports.create = (req, res) => {
   //User-ul cu rol atlet nu are permisiune sa creeze un club
@@ -137,28 +138,43 @@ exports.delete = (req, res) => {
 
 exports.list = (req, res) => {
   let resClub = null;
+  function getOwner(club) {
+    return User.findByPk(club.owner_id);
+  }
+  function getClubMembers(club) {
+    return ClubMember.findAll({
+      where: { club_id: club.id }
+    });
+  }
+  function findMember(user) {
+    return User.findByPk(user.user_id);
+  }
 
-  Club.findAll()
+  Club.findAll({
+    where: null
+  })
     .then(data => {
       resClub = data;
-      resClub.members = [];
-      data.forEach(club => {
-        User.findByPk(club.owner_id)
-          .then(userData => {
-            resClub.owner_name = userData.name;
-          })
-        ClubMembers.findAll({
-          where: { club_id: club.id }
-        })
-          .then(clubMembers => {
-            clubMembers.forEach(user => {
-              User.findByPk(user.user_id)
-                .then(userData => {
-                  resClub.members.push(userData);
-                })
-            })
-          })
-      })
+      return Promise.all(data.map(entry => getOwner(entry)));
+    })
+    .then(usersData => {
+      for (let i = 0; i < resClub.length; i++) {
+        resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
+        resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
+      }
+      console.log(resClub);
+      return Promise.all(resClub.map(entry => getClubMembers(entry)));
+    })
+    .then(clubsMembers => {
+      console.log(clubsMembers);
+      return Promise.all(clubsMembers.map(entry => findMember(entry)));
+    })
+    .then(membersData => {
+      console.log(membersData);
+      for (let i = 0; i < resClub.length; i++) {
+        resClub[i].dataValues["members"] = membersData[i];
+      }
+      
       res.status(200).send(resClub);
     })
     .catch(err => {

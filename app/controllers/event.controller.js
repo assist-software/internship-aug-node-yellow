@@ -262,7 +262,7 @@ exports.update = (req, res) => {
 
 exports.get = (req, res) => {
     const id = req.params.eventId;
-
+    //array de membri
     Event.findByPk(id)
         .then(data => {
             if (data != null) {
