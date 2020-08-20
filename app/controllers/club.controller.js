@@ -168,9 +168,15 @@ exports.list = (req, res) => {
       return Promise.all(clubsMembers.map(clubMembers => clubMembers.map(member => findMember(member))));
     })
     .then(membersData => {
+      return Promise.all(...membersData);
+    })
+    .then(membersData => {
+      console.log(membersData);
       for (let i = 0; i < resClub.length; i++) {
         if(membersData[i] != null) {
           resClub[i].dataValues["members"] = membersData[i].dataValues;
+          console.log(i);
+          console.log(membersData[i]);
         } else {
           resClub[i].dataValues["members"] = [];
         }
