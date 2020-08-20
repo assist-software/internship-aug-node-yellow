@@ -2,6 +2,8 @@ const db = require("../models");
 const Op = require("sequelize");
 const Club = db.club;
 const ClubInvite = db.clubInvite;
+const ClubMembers = db.clubMembers;
+const User = db.user;
 
 exports.create = (req, res) => {
   //User-ul cu rol atlet nu are permisiune sa creeze un club
@@ -134,13 +136,34 @@ exports.delete = (req, res) => {
 };
 
 exports.list = (req, res) => {
+  let resClub = null;
+
   Club.findAll()
-  .then(data => {
-    res.status(200).send(data);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message: err.message
+    .then(data => {
+      resClub = data;
+      resClub.members = [];
+      data.forEach(club => {
+        User.findByPk(club.owner_id)
+          .then(userData => {
+            resClub.owner_name = userData.name;
+          })
+        ClubMembers.findAll({
+          where: { club_id: club.id }
+        })
+          .then(clubMembers => {
+            clubMembers.forEach(user => {
+              User.findByPk(user.user_id)
+                .then(userData => {
+                  resClub.members.push(userData);
+                })
+            })
+          })
+      })
+      res.status(200).send(resClub);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message
+      });
     });
-  });
 };

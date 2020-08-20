@@ -3,6 +3,7 @@ const controller = require("../middlewares/verifySignUp");
 const { verifySignUp } = require("../middlewares");
 const User = db.user;
 const Sport = db.sport;
+const Club=db.club;
 const Promise = require("promise");
 
 function hasNumbers(t) {
@@ -153,8 +154,8 @@ exports.update = (req, res) => {
   let _height = req.body.height;
   let _weight = req.body.weight;
   let _age = req.body.age;
-  let primary_sport_id=null;
-  let secondary_sport_id=null;
+  let primary_sport_id = null;
+  let secondary_sport_id = null;
   var p1 = new Promise((ress, rej) => {
     if (p_Sport != null) {
       Sport.findOne({
@@ -171,7 +172,6 @@ exports.update = (req, res) => {
             });
           } else {
             primary_sport_id = data.id;
-            console.log(primary_sport_id);
             ress("");
 
           }
@@ -196,7 +196,6 @@ exports.update = (req, res) => {
             });
           } else {
             secondary_sport_id = data.id;
-            console.log(secondary_sport_id);
             ress("");
 
           }
@@ -207,7 +206,6 @@ exports.update = (req, res) => {
     }
     else rej("");
   });
-
 
   Promise.all([p1, p2]).then(v => {
     if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
@@ -223,7 +221,6 @@ exports.update = (req, res) => {
       return res.status(400).send({ message: "Invalid age." });
     }
 
-    console.log(primary_sport_id);
     const user = {
       gender: _gender,
       primary_sport_id: primary_sport_id,
@@ -249,12 +246,9 @@ exports.update = (req, res) => {
   }).catch(error => console.log(`Error in promises ${error}`))
 };
 
-
-
-
 exports.get = (req, res) => {
   if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
+    return res.status(403).send({ message: "Permission denied. gsdfs" });
   } else {
     User.findByPk(req.params.userId)
       .then(data => {
@@ -268,26 +262,46 @@ exports.get = (req, res) => {
 
 exports.search = (req, res) => {
 
-  if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
-  } else {
-    User.findAll({
-      where: {
-        first_name: {
-          [Op.ilike]: `%${req.body.first_name}%`
-        },
-        role_id: {
-          [Op.ilike]: `%${req.body.roleId}%`
+  // if (req.authJwt == null) {
+  //   return res.status(403).send({ message: "Permission denied ." });
+  // } else {
+    //const c
+  
+    console.log("//////////////////////////////////////////////////////")
+  User.findAll({
+    where: {
+      role_id: req.params.role_id
+    }
+  }).
+    then(data => {
+      console.log(data);
+      if(data==null)
+        return res.status(404).send({message: "Not found "});
+        else{
+          const list=data.map(obj=>{
+            var t={
+              id:obj.id,
+              first_name:obj.first_name,
+              last_name:obj.last_name,
+              email:obj.email,
+              _clubs:null
+            }
+            Club.findAll({where:{owner_id: obj.id }})
+            .then(clubs=>{
+              t._clubs=clubs;
+            })
+            console.log(t);
+            return t
+          });
+
+     // console.log(list);
+      return res.status(200).send(list);
         }
-      }
-    }).
-      then(data => {
-        return res.status(200).send(data);
-      })
-      .catch(err => {
-        return res.status(500).send({ message: err.message });
-      })
-  }
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
+  //}
 };
 
 
