@@ -4,7 +4,7 @@ const { verifySignUp } = require("../middlewares");
 const User = db.user;
 const Sport = db.sport;
 const Club = db.club;
-
+const Promise = require("promise");
 
 function hasNumbers(t) {
   var regex = /\d/g;
@@ -144,6 +144,8 @@ exports.create = (req, res) => {
 
 }
 
+
+
 exports.update = (req, res) => {
 
   //let f_name = req.body.first_name;
@@ -172,7 +174,6 @@ exports.update = (req, res) => {
             });
           } else {
             primary_sport_id = data.id;
-
             ress("");
 
           }
@@ -197,7 +198,6 @@ exports.update = (req, res) => {
             });
           } else {
             secondary_sport_id = data.id;
-
             ress("");
 
           }
@@ -222,7 +222,6 @@ exports.update = (req, res) => {
     if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
       return res.status(400).send({ message: "Invalid age." });
     }
-
 
     const user = {
       //first_name:f_name,
@@ -281,32 +280,38 @@ exports.search = (req, res) => {
     }
   }).
     then(data => {
-      if(data==null)
-        return res.status(404).send({message: "Not found "});
-        else{
-          const list=data.map(obj=>{
-            var t={
-              id:null,
-              first_name:null,
-              last_name:null,
-              email:null,
-              _clubs:null
-            }
-            t.id=obj.id;
-            t.first_name=obj.first_name;
-            t.last_name=obj.last_name;
-            t.email=obj.email;
-            Club.findAll({where:{owner_id: obj.id }})
-            .then(clubs=>{
-              t._clubs=clubs;
-            })
-           // console.log(t);
-            return t
-          });
+      if (data == null)
+        return res.status(404).send({ message: "Not found " });
+      else {
+        const list = data.map(obj => {
+            var t = {
+            id: obj.id,
+            first_name: obj.first_name,
+            last_name: obj.last_name,
+            email: obj.email,
+            _clubs: null
+          }
+          
+          var p1=new Promise((ress,rej)=>{Club.findAll({ where: { owner_id: obj.id } })
+            .then(clubs => {
+              if (clubs != null) {
+                t._clubs = clubs.map(obj => {
+                 // console.log(obj.name)
+                  
+                  return obj.name;
+                });
+                // console.log(t);
+                ress();
+                
+              }
+            })})
+           Promise.all([p1]).then(v=>{console.log(t); return t;})
+          
+          
+        })
 
-     // console.log(list);
-      return res.status(200).send(list);
-        }
+        return res.status(200).send(list);
+      }
     })
     .catch(err => {
       return res.status(500).send({ message: err.message });
