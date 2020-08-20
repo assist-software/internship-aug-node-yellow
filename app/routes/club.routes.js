@@ -5,7 +5,7 @@ module.exports = app => {
 
     router.post("/create", clubs.create);
 
-    router.post("/search", clubs.search);
+    router.post("/search/sport_id", clubs.search);
 
     router.get("/:clubId", clubs.get);
     

@@ -19,7 +19,8 @@ exports.create = (req, res) => {
 
   const club = {
     name: req.body.name,
-    owner_id: req.body.ownerId
+    owner_id: req.body.ownerId,
+    sport_id:req.body.sport_id
   };
 
   var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -94,12 +95,7 @@ exports.search = (req, res) => {
   } else {
     Club.findAll({
       where: {
-        name: {
-          [Op.ilike]: `%${req.body.name}%`
-        },
-        owner_id: {
-          [Op.ilike]: `%${req.body.ownerId}%`
-        }
+        sport_id:req.params.sport_id
       }
     })
       .then(data => {
