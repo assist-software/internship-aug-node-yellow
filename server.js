@@ -21,8 +21,8 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 // if you need to drop the existing table and resync database use {force: true}
-//db.sequelize.sync({ force: true });
-db.sequelize.sync(); 
+db.sequelize.sync({ force: true });
+//db.sequelize.sync(); 
 
 const Role = db.sequelize.define('role', {
   name: { type: db.Sequelize.STRING },
@@ -67,8 +67,9 @@ User.sync().then(() => {
     password: '123',
     role_id: 3
   });
-});*/
-/////////////////////////////
+});
+///////////////////////////// 
+
 const Sport = db.sequelize.define('sport', {
   type: { type: db.Sequelize.STRING }
 });
