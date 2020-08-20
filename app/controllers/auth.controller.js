@@ -21,21 +21,71 @@ if((authRoleId == 3 || authRoleId == 2) && (req.body.role_id != 3))
 {
   return res.status(403).send({ message: "Permission denied !" });
 }*/
+let f_name = req.body.first_name;
+let l_name = req.body.last_name;
+let _email = req.body.email;
+let _password = req.body.password;
+let _confirm_password = req.body.confirm_password;
   const isAdmin = req.role_id === 1;
+
+  function hasNumbers(t) {
+    var regex = /\d/g;
+    return regex.test(t);
+  }
+
+  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3))//|| f_name.trim().length != f_name.length)
+  {
+    return res.status(400).send({ message: "Invalid first name." });
+  }
+
+  if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
+    return res.status(400).send({ message: "Invalid last name." });
+  }
+  if (_password == null) {
+    return res.status(404).send({ message: "Password not found." });
+  }
+  if (_confirm_password == null) {
+    return res.status(404).send({ message: "Password not found." });
+  }
+  if (_confirm_password != _password) {
+    return res.status(406).send({ message: "Password not acceptable." });
+
+  }
+  User.findOne({
+    where: {
+      email: _email
+    }
+  }).then(user => {
+    if (user) {
+      res.status(400).send({
+        message: "Failed! Email is already in use!"
+      }
+      );
+      return;
+    }
+    else {
   const newUser = {
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
+    first_name: f_name,
+    last_name: l_name,
+    email: _email,
+    password: bcrypt.hashSync(_password, 8),
+    confirm_password: bcrypt.hashSync(_confirm_password, 8),
     role_id: isAdmin ? req.body.role_id : 3
   }
   // Save User to Database
   User.create(newUser)
-    .then(user => {
-      res.status(200).send(user);
+    .then(data => {
+      res.status(200).send(data);
     })
     .catch(err => {
       res.status(500).send({ message: err.message});
     });
-};
+  }
+
+});
+
+
+}
 // Blob.toString();
 exports.login = (req, res) => {
   User.findOne({
@@ -65,9 +115,13 @@ exports.login = (req, res) => {
        
         res.status(200).send({
           id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
           email: user.email,
-          roles: user.role_id,
-          accessToken: token
+          role_id: user.role_id,
+          accessToken: token,
+          profile_photo: user.profile_photo
+
         });
       });
     
