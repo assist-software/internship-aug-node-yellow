@@ -1,4 +1,6 @@
 const db = require("../models");
+const userRoutes = require("../routes/user.routes");
+const { club, clubInvite } = require("../models");
 const Op = require("sequelize").Op;
 const Club = db.club;
 const ClubInvite = db.clubInvite;
@@ -155,89 +157,89 @@ exports.delete = (req, res) => {
 
 exports.listAll = (req, res) => {
   let resClub = null;
-  function getOwner(club) {
-    return User.findByPk(club.owner_id);
-  }
-  function getClubMembers(club) {
-    return ClubMember.findAll({
-      where: { club_id: club.id }
-    });
-  }
-  function findMember(user) {
-    return User.findByPk(user.user_id);
-  }
-  function resolveMembers(membersData) {
-    const rez = 
-    membersData.map(async(member) => {
-      const mem = await member;
-      const user = await findMember(mem);
-      // console.log(1);
-      // console.log(user.dataValues);
-      return user.dataValues;
-    });
-    return rez;
-  }
- 
-  console.log(null);
+
   Club.findAll({
     where: {
       owner_id: {
         [Op.ne]: null
       }
     }
+  }).then(result => {
+    resClub = result;
+    const ownersId = resClub.map(x => x.owner_id);
+    return User.findAll({
+      where: {
+        id: ownersId
+      }
+    });
+  }).then(result => {
+    resClub = resClub.map(res => {
+      res.dataValues.owner = result.filter(user => user.dataValues.id === res.dataValues.owner_id)[0];
+      return res;
+    })
+    const clubIds = resClub.map(club => club.dataValues.id);
+    return ClubMember.findAll({
+      where: {
+        club_id: clubIds
+      }
+    });
+  }).then(result => {
+    const membersId = result.map(clubMember => clubMember.dataValues.user_id);
+    resClub = resClub.map(res => {
+      res.dataValues.members = result.filter(club => club.dataValues.club_id === res.dataValues.id);
+      return res;
+    })
+    return User.findAll({
+      where: {
+        id: membersId
+      }
+    })
+  }).then(clubMembers => {
+    resClub = resClub.map(res => {
+      res.dataValues.members = res.dataValues.members.map(members => clubMembers.filter(user => user.dataValues.id === members.dataValues.user_id));
+      return res;
+    });
+    const clubIds = resClub.map(club => club.dataValues.id);
+    return ClubInvite.findAll({
+      where: {
+        club_id: clubIds
+      }
+    })
+  }).then(result => {
+    const invitesEmails = result.map(invite => invite.dataValues.email);
+    resClub = resClub.map(res => {
+      res.dataValues.pending = result.filter(club => club.dataValues.club_id === res.dataValues.id);
+      return res;
+    })
+    return User.findAll({
+      where: {
+        email: {
+          [Op.like]: {[Op.any]: invitesEmails}
+      }
+    }});
+  }).then(clubInvites => {
+    console.log(clubInvites);
+    resClub = resClub.map(res => {
+      res.dataValues.pending = res.dataValues.pending.map(invites => clubInvites.filter(user => user.dataValues.id === invites.dataValues.user_id));
+      return res;
+    })
+    return res.status(200).send(resClub);
+  })
+
+};
+
+exports.list = (req, res) => {
+  const condition = (req.body.role_id == 2) ? { owner_id: req.body.user_id } : null;
+
+  Club.findAll({
+    where: condition
   })
     .then(data => {
-      resClub = data.map(club => club.dataValues);
-      return Promise.all(data.map(entry => getOwner(entry)));
-    })
-    .then(usersData => {
-      for (let i = 0; i < resClub.length; i++) {
-        resClub[i]["ownerFirstName"] = usersData[i].first_name;
-        resClub[i]["ownerLastName"] = usersData[i].last_name;
-      }
-      return Promise.all(resClub.map(entry => getClubMembers(entry)));
-    })
-    .then((membersData) => {
-      for (let i = 0; i < resClub.length; i++) {
-        if (membersData[i] != null) {
-          // resClub[i]["members"] = 
-          Promise.all(resolveMembers(membersData[i]))
-          .then(data => {
-            resClub[i]["members"] = data;
-            //console.log(2);
-          //console.log(resClub[i]["members"]);
-          if (i == resClub.length - 1) {
-            res.status(200).send(resClub);
-          }
-          });
-          
-        } else {
-          resClub[i]["members"] = [];
-          if (i == resClub.length - 1) {
-            res.status(200).send(resClub);
-          }
-        }
-      }
+      res.status(200).send(data);
     })
     .catch(err => {
       res.status(500).send({
         message: err.message
       });
     });
-};
-
-exports.list = (req, res) => {
-  const condition = (req.body.role_id == 2) ? {owner_id: req.body.user_id} : null;
-
-  Club.findAll({
-    where: condition
-  })
-  .then(data => {
-    res.status(200).send(data);
-  })
-  .catch(err => {
-    res.status(500).send({
-      message: err.message
-    });
-  });
 };
