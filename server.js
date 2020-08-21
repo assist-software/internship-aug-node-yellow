@@ -4,9 +4,9 @@ const cors = require("cors");
 //const db = require("./app/models");
 const db = require("./app/models/index");
 var bcrypt = require("bcryptjs");
-//const User = db.user;
-//const Sport = db.sport;
-//const Role = db.role;
+// const User = db.user;
+// const Sport = db.sport;
+// const Role = db.role;
 const app = express();
 
 const corsOptions = {
@@ -69,16 +69,16 @@ db.sequelize.sync();
 //   email: { type: db.Sequelize.STRING },
 //   password: { type: db.Sequelize.STRING },
 //   role_id: { type: db.Sequelize.INTEGER },
-//   gender: { type: db.Sequelize.STRING },
-//   primary_sport_id: { type: db.Sequelize.INTEGER },
-//   secondary_sport_id: { type: db.Sequelize.INTEGER },
-//   height: { type: db.Sequelize.INTEGER },
-//   weight: { type: db.Sequelize.INTEGER },
-//   age: { type: db.Sequelize.INTEGER },
-//   profile_photo: { type: db.Sequelize.BLOB }
-
-// });
-// User.sync().then(() => {
+//   gender:{type: db.Sequelize.STRING},
+//   primary_sport_id: {type: db.Sequelize.INTEGER},
+//   secondary_sport_id:{type: db.Sequelize.INTEGER},
+//   height:{type: db.Sequelize.INTEGER},
+//   weight:{type: db.Sequelize.INTEGER},
+//   age: {type: db.Sequelize.INTEGER},
+//   profile_photo: {type: db.Sequelize.BLOB}
+  
+//  });
+//  User.sync().then(() => {
 //   User.create({
 //     first_name: "Coach1",
 //     last_name: "Yellow",

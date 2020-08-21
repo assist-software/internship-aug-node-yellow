@@ -186,8 +186,8 @@ exports.create = (req, res) => {
         confirm_password: req.body.confirm_password,
         role_id: req.body.role,
         gender: _gender,
-        primarySport: p_Sport,
-        secondarySport: s_Sport,
+        primary_sport_id: primary_sport_id,
+        secondary_sport_id: secondary_sport_id,
         height: _height,
         weight: _weight,
         age: _age,
@@ -337,12 +337,12 @@ exports.search = (req, res) => {
       role_id: req.params.role_id
     }
   }).
-    then(async (data) => {
+    then(async(data) => {
       if (data === null)
         return res.status(404).send({ message: "Not found " });
       else {
-        var list = [];
-        data.map(async (obj, index) => {
+        var list=[];
+         data.map(async (obj,index) => {
           var t = {
             id: obj.id,
             first_name: obj.first_name,
@@ -360,117 +360,16 @@ exports.search = (req, res) => {
               }
               return t;
             });
-          console.log(a);
-          list.push(a);
-          if (index === data.length - 1)
-            return res.status(200).send(list);
+           console.log(a);
+           list.push(a);
+          if(index===data.length-1)
+            return res.status(200).send(list) ;
         })
       }
     })
     .catch(err => {
       return res.status(500).send({ message: err.message });
     })
-
-};
-exports.searchById = (req, res) => {
-  User.findAll({
-    where: {
-      role_id: 2,
-      id: req.params.id
-    }
-  }).
-    then(async (data) => {
-      if (data === null)
-        return res.status(404).send({ message: "Not found " });
-      else {
-        var list = [];
-        data.map(async (obj, index) => {
-          var t = {
-            id: obj.id,
-            first_name: obj.first_name,
-            last_name: obj.last_name,
-            email: obj.email,
-            _clubs: null,
-            unused_clubs: null
-          }
-          var a = await Club.findAll({ where: { owner_id: obj.id } })
-            .then((clubs) => {
-
-              if (clubs != null) {
-                t._clubs = clubs.map(o => {
-                  const clubs_u = {
-                    c_id: null,
-                    c_name: null
-                  }
-
-                  clubs_u.c_id = o.id;
-                  clubs_u.c_name = o.name;
-                  return clubs_u;
-                });
-              }
-              return t;
-            }).catch(err => {
-              res.status(500).send({
-                message: err.message
-              });
-            })
-          var b = await Club.findAll({ where: { owner_id: null } })
-            .then(async (data) => {
-
-              t.unused_clubs = await data.map(o => {
-                const clubs_u = {
-                  c_id: null,
-                  c_name: null
-                }
-
-                clubs_u.c_id = o.id;
-                clubs_u.c_name = o.name;
-                return clubs_u;
-              })
-              return t;
-            })
-            .catch(err => {
-              res.status(500).send({
-                message: err.message
-              });
-            })
-          list.push(b);
-          if (index === data.length - 1)
-            return res.status(200).send(list);
-        })
-      }
-    })
-    .catch(err => {
-      return res.status(500).send({ message: err.message });
-    })
-
-};
-
-exports.updateCoach = async(req, res) => {
-  const clubs = req.body.clubs;
-  const id = req.body.user_id;
-  console.log("am ajuns");
-
-  await Club.update({ owner_id: null }, { where: { owner_id: id } })
-  await Club.update({owner_id:id}, { where: { id: clubs } })
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email
-  };
-  User.update(user, {
-    where: {
-      id: id
-    }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.status(200).send("User updated successfully !");
-      }
-      else {
-        res.status(404).send("User not found.")
-      }
-    }).catch(error => console.log(`Error in promises ${error}`))
 
 };
 

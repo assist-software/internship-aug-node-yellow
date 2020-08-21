@@ -177,7 +177,18 @@ exports.list = (req, res) => {
   function findMember(user) {
     return User.findByPk(user.user_id);
   }
-
+  function resolveMembers(membersData) {
+    const rez = 
+    membersData.map(async(member) => {
+      const mem = await member;
+      const user = await findMember(mem);
+      // console.log(1);
+      // console.log(user.dataValues);
+      return user.dataValues;
+    });
+    return rez;
+  }
+ 
   console.log(null);
   Club.findAll({
     where: {
@@ -187,33 +198,37 @@ exports.list = (req, res) => {
     }
   })
     .then(data => {
-      resClub = data;
+      resClub = data.map(club => club.dataValues);
       return Promise.all(data.map(entry => getOwner(entry)));
     })
     .then(usersData => {
       for (let i = 0; i < resClub.length; i++) {
-        resClub[i].dataValues["ownerFirstName"] = usersData[i].first_name;
-        resClub[i].dataValues["ownerLastName"] = usersData[i].last_name;
+        resClub[i]["ownerFirstName"] = usersData[i].first_name;
+        resClub[i]["ownerLastName"] = usersData[i].last_name;
       }
       return Promise.all(resClub.map(entry => getClubMembers(entry)));
     })
     .then((membersData) => {
-      console.log(membersData);
       for (let i = 0; i < resClub.length; i++) {
         if (membersData[i] != null) {
-          resClub[i].dataValues["members"] = membersData[i].map(async (member) => {
-            const mem = await member;
-            const user = await findMember(mem);
-            console.log(user);
-            return user;
+          // resClub[i]["members"] = 
+          Promise.all(resolveMembers(membersData[i]))
+          .then(data => {
+            resClub[i]["members"] = data;
+            //console.log(2);
+          //console.log(resClub[i]["members"]);
+          if (i == resClub.length - 1) {
+            res.status(200).send(resClub);
+          }
           });
-          console.log(i);
-          console.log(resClub[i].dataValues["members"]);
+          
         } else {
-          resClub[i].dataValues["members"] = [];
+          resClub[i]["members"] = [];
+          if (i == resClub.length - 1) {
+            res.status(200).send(resClub);
+          }
         }
       }
-      res.status(200).send(resClub);
     })
     .catch(err => {
       res.status(500).send({
