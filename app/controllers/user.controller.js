@@ -5,14 +5,75 @@ const User = db.user;
 const Sport = db.sport;
 const Club = db.club;
 const Promise = require("promise");
-const { async } = require("q");
+const { async, timeout } = require("q");
 const { response } = require("express");
 const { reject } = require("promise");
 const await = require('await-promises');
-
+const { request } = require("http");
+const mail = require("../utils/email.utils.js");
+var bcrypt = require("bcryptjs");
 function hasNumbers(t) {
   var regex = /\d/g;
   return regex.test(t);
+}
+function generatePassword() {
+  var length = 8,
+    charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+    retVal = "";
+  for (var i = 0, n = charset.length; i < length; ++i) {
+    retVal += charset.charAt(Math.floor(Math.random() * n));
+  }
+  return retVal;
+}
+exports.createCoach = (req, res) => {
+  var regex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: null,
+    role_id: 2
+  }
+  if (regex.test(user.email)) {
+    let pass = generatePassword();
+    mail.sendMail(user.email, "Your password", "Dear " + user.first_name + " " + user.last_name + "," + " this is your password: " + pass);
+    user.password = bcrypt.hashSync(pass, 8);
+    User.create(user)
+      .then(data => {
+
+
+        Club.update({ owner_id: data.id }, { where: { id: req.body.clubs } })
+          .then(num => {
+            if (num == 1) {
+              return Club.findByPk(id);
+            } else {
+              return res.status(404).send({
+                message: "Club not found."
+              });
+            }
+          })
+          .then(data => {
+            res.status(200).send(data);
+          })
+          .catch(err => {
+            res.status(500).send({ message: err.message });
+          });
+
+
+
+
+        res.status(200).send(data);
+      })
+      .catch(err => {
+        return res.status(500).send({ message: err.message });
+      });
+  }
+  else
+    return res.status(400).send({ message: "Invalid email" });
+  // Club.update(where:{
+  //   id:req.body.club
+  // })
+  //const club=req.body.clubs;
 }
 exports.create = (req, res) => {
 
@@ -271,67 +332,180 @@ exports.get = (req, res) => {
 
 
 exports.search = (req, res) => {
-
-  // if (req.authJwt == null) {
-  // return res.status(403).send({ message: "Permission denied ." });
-  // } else {
-  // var x;
-  //   // //if (coach) {
-// User.findAll({
-//     where:{role_id:2},
-//    // include: { model: User }
-//   })
-//     .then(data => {
-      
-//       return res.status(200).send(data);
-//     })
- 
-  // //}
-  // var x=null;
-
-
-    console.log("//////////////////////////////////////////////////////")
-    User.findAll({
-      where: {
-        role_id: req.params.role_id
-      }
-    }).
-      then(data => {
-        if (data === null)
-          return res.status(404).send({ message: "Not found " });
-        else {
-          const list = data.map(obj => {
-            var t = {
-              id: obj.id,
-              first_name: obj.first_name,
-              last_name: obj.last_name,
-              email: obj.email,
-              _clubs: null
-            }
-            Club.findAll({ where: { owner_id: obj.id } })
-            .then(clubs => {
+  User.findAll({
+    where: {
+      role_id: req.params.role_id
+    }
+  }).
+    then(async (data) => {
+      if (data === null)
+        return res.status(404).send({ message: "Not found " });
+      else {
+        var list = [];
+        data.map(async (obj, index) => {
+          var t = {
+            id: obj.id,
+            first_name: obj.first_name,
+            last_name: obj.last_name,
+            email: obj.email,
+            _clubs: null
+          }
+          var a = await Club.findAll({ where: { owner_id: obj.id } })
+            .then((clubs) => {
 
               if (clubs != null) {
-                t._clubs = clubs.map(obj => {
-                  return obj.name;
+                t._clubs = clubs.map(o => {
+                  return o.name;
                 });
               }
-              
+              return t;
             });
-         
-        
+          console.log(a);
+          list.push(a);
+          if (index === data.length - 1)
+            return res.status(200).send(list);
+        })
+      }
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
 
-            return t;
-          })
-          return res.status(200).send(list);
-        }
-      })
-      .catch(err => {
-        return res.status(500).send({ message: err.message });
-      })
+};
+exports.searchById = (req, res) => {
+  User.findAll({
+    where: {
+      role_id: 2,
+      id: req.params.id
+    }
+  }).
+    then(async (data) => {
+      if (data === null)
+        return res.status(404).send({ message: "Not found " });
+      else {
+        var list = [];
+        data.map(async (obj, index) => {
+          var t = {
+            id: obj.id,
+            first_name: obj.first_name,
+            last_name: obj.last_name,
+            email: obj.email,
+            _clubs: null,
+            unused_clubs: null
+          }
+          var a = await Club.findAll({ where: { owner_id: obj.id } })
+            .then((clubs) => {
+
+              if (clubs != null) {
+                t._clubs = clubs.map(o => {
+                  const clubs_u = {
+                    c_id: null,
+                    c_name: null
+                  }
+
+                  clubs_u.c_id = o.id;
+                  clubs_u.c_name = o.name;
+                  return clubs_u;
+                });
+              }
+              return t;
+            }).catch(err => {
+              res.status(500).send({
+                message: err.message
+              });
+            })
+          var b = await Club.findAll({ where: { owner_id: null } })
+            .then(async (data) => {
+
+              t.unused_clubs = await data.map(o => {
+                const clubs_u = {
+                  c_id: null,
+                  c_name: null
+                }
+
+                clubs_u.c_id = o.id;
+                clubs_u.c_name = o.name;
+                return clubs_u;
+              })
+              return t;
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: err.message
+              });
+            })
+          list.push(b);
+          if (index === data.length - 1)
+            return res.status(200).send(list);
+        })
+      }
+    })
+    .catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
 
 };
 
+exports.updateCoach = async(req, res) => {
+  const clubs = req.body.clubs;
+  const id = req.body.user_id;
+  console.log("am ajuns");
+
+  await Club.update({ owner_id: null }, { where: { owner_id: id } })
+  await Club.update({owner_id:id}, { where: { id: clubs } })
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email
+  };
+  User.update(user, {
+    where: {
+      id: id
+    }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.status(200).send("User updated successfully !");
+      }
+      else {
+        res.status(404).send("User not found.")
+      }
+    }).catch(error => console.log(`Error in promises ${error}`))
+
+};
+
+
+
+
+exports.deleteAll = async (req, res) => {
+  const id = req.body.user_id;
+
+  await Club.update({ owner_id: null }, { where: { owner_id: id } })
+
+
+  User.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      console.log(num);
+      if (num >= 1) {
+
+        return res.status(200).send({
+          message: "User deleted successfully!"
+        });
+      } else {
+        return res.status(404).send({
+          message: "User not found."
+        });
+      }
+    })
+    .catch(err => {
+      return res.status(500).send({
+        message: err.message
+      });
+    });
+
+}
 
 
 exports.delete = (req, res) => {
@@ -349,7 +523,7 @@ exports.delete = (req, res) => {
         return res.status(404).send({
           message: "User not found."
         });
-      }
+      } F
     })
     .catch(err => {
       return res.status(500).send({

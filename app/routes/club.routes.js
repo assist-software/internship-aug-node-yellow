@@ -11,6 +11,8 @@ module.exports = app => {
     
     router.get("/", clubs.list);
 
+    router.get("/owner/null",clubs.listClubsOwnerNull);
+
     router.put("/:clubId", clubs.update);
 
     router.delete("/:clubId", clubs.delete);

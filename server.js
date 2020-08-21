@@ -171,13 +171,13 @@ db.sequelize.sync();
 // Club.sync().then(() => {
 //   Club.create(
 //     {
-//       name: 'steaua',
-//       owner_id: 4,
+//       name: 'foresta',
+//       owner_id: null,
 //       sport_id: 1
 //     });
 //   Club.create({
-//     name: 'dinamo',
-//     owner_id: 4,
+//     name: 'avantu',
+//     owner_id: null,
 //     sport_id: 1
 //   });
 // });
@@ -258,6 +258,8 @@ require("./app/routes/event.routes.js")(app);
 require("./app/routes/event-invite.routes.js")(app);
 require("./app/routes/workout.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
+require("./app/routes/sport.routes.js")(app);
+
 
 
 // set port, listen for requests
