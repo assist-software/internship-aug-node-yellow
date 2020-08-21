@@ -397,7 +397,6 @@ exports.deleteAll = async (req, res) => {
     }
   })
     .then(num => {
-      console.log(num);
       if (num >= 1) {
         return res.status(200).send({ message: "Deleted successfully!" });
       } else {
@@ -486,7 +485,6 @@ exports.search = (req, res) => {
           }
           var a = await Club.findAll({ where: { owner_id: obj.id } })
             .then((clubs) => {
-
               if (clubs != null) {
                 t._clubs = clubs.map(o => {
                   return o.name;
@@ -494,7 +492,6 @@ exports.search = (req, res) => {
               }
               return t;
             });
-          console.log(a);
           list.push(a);
           if (index === data.length - 1)
             return res.status(200).send(list);
