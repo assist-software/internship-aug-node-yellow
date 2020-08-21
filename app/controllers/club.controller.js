@@ -153,7 +153,7 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.list = (req, res) => {
+exports.listAll = (req, res) => {
   let resClub = null;
   function getOwner(club) {
     return User.findByPk(club.owner_id);
@@ -224,4 +224,20 @@ exports.list = (req, res) => {
         message: err.message
       });
     });
+};
+
+exports.list = (req, res) => {
+  const condition = (req.body.role_id == 2) ? {owner_id: req.body.user_id} : null;
+
+  Club.findAll({
+    where: condition
+  })
+  .then(data => {
+    res.status(200).send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message
+    });
+  });
 };

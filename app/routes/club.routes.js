@@ -9,7 +9,9 @@ module.exports = app => {
 
     router.get("/:clubId", clubs.get);
     
-    router.get("/", clubs.list);
+    router.get("/", clubs.listAll); //List of clubs with members
+
+    router.get("/list", clubs.list); //List of clubs for a coach or admin
 
     router.put("/:clubId", clubs.update);
 

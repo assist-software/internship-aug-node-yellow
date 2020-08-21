@@ -5,6 +5,8 @@ const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const sendMail = require("../utils/email.utils.js");
 const Op = require("sequelize");
+const EventMember = db.eventMember;
+const User = db.user;
 
 exports.create = (req, res) => {
     //Check if club exists
@@ -110,7 +112,7 @@ exports.create = (req, res) => {
         club_id: req.body.clubId,
         radius: radius,
         sport_type_id: sport_type_id,
-        event_cover: event_cover
+        event_cover: event_cover.link
     };
 
     Event.create(event)
@@ -242,7 +244,7 @@ exports.update = (req, res) => {
         club_id: req.body.clubId,
         radius: radius,
         sport_type_id: sport_type_id,
-        event_cover: event_cover
+        event_cover: event_cover.link
     };
 
     Event.update(event, {
@@ -317,4 +319,41 @@ exports.delete = (req, res) => {
                 message: err.message
             });
         });
+};
+
+exports.list = (req, res) => {
+  let resEvent = null;
+  function findMembers(event) {
+    return EventMember.findAll({
+        where: {
+            event_id: event.id
+        }
+    });
+  }
+  async function getMemberData(member) {
+      const rez = await User.findByPk(member.user_id);
+      return rez.dataValues;
+  }
+
+  Event.findAll()
+  .then(events => {
+      resEvent = events.map(event => event.dataValues);
+      return Promise.all(resEvent.map(event => findMembers(event)));
+  })
+  .then(eventsMembers => {
+      for(let i = 0; i < resEvent.length; i++) {
+          Promise.all(eventsMembers[i].map(member => getMemberData(member)))
+          .then(membersData => {
+              resEvent[i]["members"] = membersData;
+              if(i == resEvent.length - 1) {
+                  res.status(200).send(resEvent);
+              }
+          })
+      }
+  })
+  .catch(err => {
+      res.status(500).send({
+          message: err.message
+      });
+  });
 };
