@@ -12,8 +12,13 @@ module.exports = app => {
     router.get("/search/:role_id", users.search);
     //router.get("/search/:roleId", users.search);
 
+    router.post("/create/coach", users.createCoach);
 
     router.delete("/:userId", users.delete);
+
+    router.post("/delete/all", users.deleteAll);
+    
+    router.get("/search/byid/:id", users.searchById);
 
     app.use('/api/user', router);
 }

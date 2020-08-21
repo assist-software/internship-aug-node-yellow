@@ -277,7 +277,25 @@ exports.get = (req, res) => {
             return res.status(404).send({ message: err.message });
         });
 };
-
+exports.getAll = (req, res) => {
+    const id = req.params.club_id;
+    //array de membri
+    Event.findAll({
+        where:{club_id: id }})
+        .then(data => {
+            if (data != null) {
+            console.log(data);
+                return res.status(200).send(data);
+            } else {
+                return res.status(404).send({
+                    message: "Event not found."
+                });
+            }
+        })
+        .catch(err => {
+            return res.status(404).send({ message: err.message });
+        });
+};
 exports.search = (req, res) => {
     //May be added more filters
     Event.findAll({

@@ -99,8 +99,11 @@ exports.list = (req, res) => {
     ClubInvite.findAll({
         where: { club_id: id }
     })
-        .then(data => {
-            res.status(200).send(data);
+        .then(async(data) => {
+            await User.findAll({ where: { email: data.email } })
+            .then(date=>{
+               return res.status(200).send(date);
+            }) 
         })
         .catch(err => {
             res.status(500).send({

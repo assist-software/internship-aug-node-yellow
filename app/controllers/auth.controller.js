@@ -71,7 +71,7 @@ let _confirm_password = req.body.confirm_password;
     password: bcrypt.hashSync(_password, 8),
     confirm_password: bcrypt.hashSync(_confirm_password, 8),
     role_id: isAdmin ? req.body.role_id : 3,
-    profile_photo:10011101100100
+    profile_photo:null
   }
   // Save User to Database
   User.create(newUser)

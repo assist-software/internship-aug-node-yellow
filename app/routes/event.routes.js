@@ -9,6 +9,8 @@ module.exports = app => {
 
     router.get("/:eventId", events.get);
 
+    router.get("/all/:club_id", events.getAll);
+
     router.put("/:eventId", events.update);
 
     router.delete("/:eventId", events.delete);

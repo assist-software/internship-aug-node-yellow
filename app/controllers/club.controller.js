@@ -152,7 +152,17 @@ exports.delete = (req, res) => {
       });
     });
 };
-
+exports.listClubsOwnerNull = (req, res) => {
+  Club.findAll({ where: { owner_id: null } })
+    .then(data => { 
+      console.log(data);
+      return res.status(200).send(data) ;})
+    .catch(err => {
+      res.status(500).send({
+        message: err.message
+      });
+    })
+};
 exports.list = (req, res) => {
   let resClub = null;
   function getOwner(club) {
@@ -214,6 +224,7 @@ exports.list = (req, res) => {
         } else {
           resClub[i]["members"] = [];
           if (i == resClub.length - 1) {
+            console.log(resClub);
             res.status(200).send(resClub);
           }
         }

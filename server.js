@@ -106,9 +106,9 @@ Club.sync().then(() => {
     name: 'lavie',
     owner_id: 1
   });
-});
+});*/
 ///////////////////////////////////////////
-
+/*
 const Event = db.sequelize.define("event", {
   name: { type: db.Sequelize.STRING },
   date: { type: db.Sequelize.DATE },
@@ -123,17 +123,17 @@ const Event = db.sequelize.define("event", {
 
 Event.sync().then(()=>{
   Event.create({
-    name:'First event',
-    date:'2015-03-25',
-    time:'00:00:00',
-    description:'stai acasa',
+    name:'Last event',
+    date:'2019-03-25',
+    time:'00:40:00',
+    description:'acasa',
     location:'la tine acasa',
-    club_id:2,
+    club_id:4,
     radius:3,
     sport_type_id:1,
     event_cover:0
   });
-});
+});*/
 
 /*
 const ClubInvite = db.sequelize.define("clubInvite", {
@@ -214,7 +214,7 @@ require("./app/routes/event.routes.js")(app);
 require("./app/routes/event-invite.routes.js")(app);
 require("./app/routes/workout.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
-
+require("./app/routes/sport.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
