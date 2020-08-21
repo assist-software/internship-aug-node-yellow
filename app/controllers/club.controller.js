@@ -8,14 +8,14 @@ const PromiseAll = require("promises-all");
 
 exports.create = (req, res) => {
   //User-ul cu rol atlet nu are permisiune sa creeze un club
-  if (req.authJwt.role_id == 3) {
+  /*if (req.authJwt.role_id == 3) {
     return res.status(403).send({
       message: "Access denied."
     });
     //User-ul cu rol coach cand creaza un club devine owner
   } else if (req.authJwt.role_id == 2) {
     req.body.ownerId = req.authJwt.user_id;
-  }
+  }*/
 
   const club = {
     name: req.body.name,
@@ -118,7 +118,7 @@ exports.search = (req, res) => {
   return t
    })
    
-  console.log(data);
+  //console.log(data);
   return res.status(200).send(list);
    }
    })
@@ -168,7 +168,7 @@ exports.list = (req, res) => {
   }
  Club.findAll({include: [{all: true, nested:true}]})
  .then(test => {
-   console.log(test);
+   //console.log(test);
  })
  .catch(err => {
    console.error(err);

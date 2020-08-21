@@ -70,7 +70,8 @@ let _confirm_password = req.body.confirm_password;
     email: _email,
     password: bcrypt.hashSync(_password, 8),
     confirm_password: bcrypt.hashSync(_confirm_password, 8),
-    role_id: isAdmin ? req.body.role_id : 3
+    role_id: isAdmin ? req.body.role_id : 3,
+    profile_photo:10011101100100
   }
   // Save User to Database
   User.create(newUser)
@@ -112,15 +113,21 @@ exports.login = (req, res) => {
       var token = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 86400 // 24 hours
       });
-       
         res.status(200).send({
           id: user.id,
           first_name: user.first_name,
           last_name: user.last_name,
           email: user.email,
           role_id: user.role_id,
-          accessToken: token,
-          profile_photo: user.profile_photo
+          gender: user.gender,
+          primarySport: user.primary_sport_id,
+          secondarySport: user.secondary_sport_id,
+          height: user.height,
+          weight:user.weight,
+          age: user.age,
+          profile_photo: user.profile_photo,
+          accessToken: token
+          
 
         });
       });
