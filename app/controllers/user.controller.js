@@ -44,12 +44,10 @@ exports.create = (req, res) => {
   let _age = req.body.age;
   let primary_sport_id;
   let secondary_sport_id;
-
-  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3))//|| f_name.trim().length != f_name.length)
+  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3))
   {
     return res.status(400).send({ message: "Invalid first name." });
   }
-
   if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
     return res.status(400).send({ message: "Invalid last name." });
   }
@@ -64,7 +62,6 @@ exports.create = (req, res) => {
   }
   if (confirm_password != password) {
     return res.status(406).send({ message: "Password not acceptable." });
-
   }
   if (p_Sport != null) {
     Sport.findOne({
@@ -122,10 +119,7 @@ exports.create = (req, res) => {
     }
   }).then(user => {
     if (user) {
-      res.status(400).send({
-        message: "Failed! Email is already in use!"
-      }
-      );
+      res.status(400).send({message: "Failed! Email is already in use!"});
       return;
     }
     else {
@@ -144,10 +138,8 @@ exports.create = (req, res) => {
         age: _age,
         profile_photo: req.body.profile_photo
       };
-
       User.create(user)
         .then(data => {
-
           return res.status(200).send(data);
         })
         .catch(err => {
@@ -156,108 +148,6 @@ exports.create = (req, res) => {
     }
   });
 }
-
-
-
-exports.update = (req, res) => {
-
-  let _gender = req.body.gender;
-  let p_Sport = req.body.primarySport;
-  let s_Sport = req.body.secondarySport;
-  let _height = req.body.height;
-  let _weight = req.body.weight;
-  let _age = req.body.age;
-  let primary_sport_id = null;
-  let secondary_sport_id = null;
-  var p1 = new Promise((ress, rej) => {
-    if (p_Sport != null) {
-      Sport.findOne({
-        where: {
-          type: p_Sport
-        }
-      })
-        .then(data => {
-          if (data == null) {
-            rej("");
-            return res.status(404).send({
-              message: "sportType not found."
-
-            });
-          } else {
-            primary_sport_id = data.id;
-            ress("");
-
-          }
-        })
-        .catch(err => {
-          return res.status(500).send({ message: err.message });
-        });
-    } else ress("");
-  });
-  var p2 = new Promise((ress, rej) => {
-    if (s_Sport != null) {
-      Sport.findOne({
-        where: {
-          type: s_Sport
-        }
-      })
-        .then(data => {
-          if (data == null) {
-            rej("");
-            return res.status(404).send({
-              message: "sportType not found."
-            });
-          } else {
-            secondary_sport_id = data.id;
-            ress("");
-
-          }
-        })
-        .catch(err => {
-          return res.status(500).send({ message: err.message });
-        });
-    }
-    else rej("");
-  });
-
-  Promise.all([p1, p2]).then(v => {
-    if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
-      return res.status(400).send({ message: "Invalid gender." });
-    }
-    if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
-      return res.status(400).send({ message: "Invalid height." });
-    }
-    if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
-      return res.status(400).send({ message: "Invalid weight." });
-    }
-    if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
-      return res.status(400).send({ message: "Invalid age." });
-    }
-
-    const user = {
-      gender: _gender,
-      primary_sport_id: primary_sport_id,
-      secondary_sport_id: secondary_sport_id,
-      height: _height,
-      weight: _weight,
-      age: _age
-    };
-    User.update(user, {
-      where: {
-        id: req.params.userId
-      }
-    })
-      .then(num => {
-        if (num == 1) {
-          res.status(200).send("User updated successfully !");
-        }
-        else {
-          res.status(404).send("User not found.")
-        }
-      })
-
-  }).catch(error => console.log(`Error in promises ${error}`))
-};
 
 exports.get = (req, res) => {
   if (req.authJwt == null) {
@@ -273,10 +163,8 @@ exports.get = (req, res) => {
   }
 };
 
-
 exports.delete = (req, res) => {
   const id = req.params.userId;
-
   User.destroy({
     where: { id: id }
   })
@@ -358,6 +246,102 @@ exports.searchById = (req, res) => {
     })
 };
 
+//after register we need to add data about athlete
+exports.update = (req, res) => {
+  let _gender = req.body.gender;
+  let p_Sport = req.body.primarySport;
+  let s_Sport = req.body.secondarySport;
+  let _height = req.body.height;
+  let _weight = req.body.weight;
+  let _age = req.body.age;
+  let primary_sport_id = null;
+  let secondary_sport_id = null;
+  var p1 = new Promise((ress, rej) => {
+    if (p_Sport != null) {
+      Sport.findOne({
+        where: {
+          type: p_Sport
+        }
+      })
+        .then(data => {
+          if (data == null) {
+            rej("");
+            return res.status(404).send({
+              message: "sportType not found."
+
+            });
+          } else {
+            primary_sport_id = data.id;
+            ress("");
+
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({ message: err.message });
+        });
+    } else ress("");
+  });
+  var p2 = new Promise((ress, rej) => {
+    if (s_Sport != null) {
+      Sport.findOne({
+        where: {
+          type: s_Sport
+        }
+      })
+        .then(data => {
+          if (data == null) {
+            rej("");
+            return res.status(404).send({
+              message: "sportType not found."
+            });
+          } else {
+            secondary_sport_id = data.id;
+            ress("");
+
+          }
+        })
+        .catch(err => {
+          return res.status(500).send({ message: err.message });
+        });
+    }
+    else rej("");
+  });
+  Promise.all([p1, p2]).then(v => {
+    if (_gender != null && (!(_gender === "male" || _gender === "female"))) {
+      return res.status(400).send({ message: "Invalid gender." });
+    }
+    if (_height != null && (isNaN(_height) || _height < 150 || _height > 300)) {
+      return res.status(400).send({ message: "Invalid height." });
+    }
+    if (_weight != null && (isNaN(_weight) || _weight < 30 || _weight > 100)) {
+      return res.status(400).send({ message: "Invalid weight." });
+    }
+    if (_age != null && (isNaN(_age) || _age < 5 || _age > 100)) {
+      return res.status(400).send({ message: "Invalid age." });
+    }
+    const user = {
+      gender: _gender,
+      primary_sport_id: primary_sport_id,
+      secondary_sport_id: secondary_sport_id,
+      height: _height,
+      weight: _weight,
+      age: _age
+    };
+    User.update(user, {
+      where: {
+        id: req.params.userId
+      }
+    })
+      .then(num => {
+        if (num == 1) {
+          res.status(200).send("User updated successfully !");
+        }
+        else {
+          res.status(404).send("User not found.")
+        }
+      })
+  }).catch(error => console.log(`Error in promises ${error}`))
+};
 
 //update a coach and his clubs
 exports.updateCoach = async (req, res) => {
@@ -387,7 +371,6 @@ exports.updateCoach = async (req, res) => {
   if (user.last_name != null && (hasNumbers(user.last_name) || user.last_name.length < 3)) {
     return res.status(400).send({ message: "Invalid first name." });
   }
-
   User.update(user, {
     where: {
       id: id
@@ -401,9 +384,7 @@ exports.updateCoach = async (req, res) => {
         res.status(404).send("User not found.")
       }
     }).catch(error => console.log(`Error in promises ${error}`))
-
 };
-
 
 // delete all users with role_id=2(coach)=>owner_id (clubs)=null
 exports.deleteAll = async (req, res) => {
