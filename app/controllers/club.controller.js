@@ -196,7 +196,7 @@ exports.listAll = (req, res) => {
     })
   }).then(clubMembers => {
     resClub = resClub.map(res => {
-      res.dataValues.members = res.dataValues.members.map(members => clubMembers.filter(user => user.dataValues.id === members.dataValues.user_id));
+      res.dataValues.members = res.dataValues.members.map(members => clubMembers.filter(user => user.dataValues.id === members.dataValues.user_id)[0]);
       return res;
     });
     const clubIds = resClub.map(club => club.dataValues.id);
@@ -218,9 +218,8 @@ exports.listAll = (req, res) => {
       }
     }});
   }).then(clubInvites => {
-    console.log(clubInvites);
     resClub = resClub.map(res => {
-      res.dataValues.pending = res.dataValues.pending.map(invites => clubInvites.filter(user => user.dataValues.id === invites.dataValues.user_id));
+      res.dataValues.pending = res.dataValues.pending.map(invites => clubInvites.filter(user => user.dataValues.email === invites.dataValues.email)[0]);
       return res;
     })
     return res.status(200).send(resClub);
