@@ -44,30 +44,30 @@ db.sequelize.sync();
 // });
 /*
 ////////////////////////////////
+*/
+// const User = db.sequelize.define('user', {
+//   email: { type: db.Sequelize.STRING },
+//   password: { type: db.Sequelize.STRING },
+//   role_id: { type: db.Sequelize.INTEGER }
 
-const User = db.sequelize.define('user', {
-  email: { type: db.Sequelize.STRING },
-  password: { type: db.Sequelize.STRING },
-  role_id: { type: db.Sequelize.INTEGER }
-
-});
-User.sync().then(() => {
-  User.create({
-    email: 'andrei.seby45@yahoo.com',
-    password: 'true',
-    role_id: 1
-  });
-  User.create({
-    email: 'test2@test.com',
-    password: 'asd',
-    role_id: 2
-  });
-  User.create({
-    email: 'test3@test.com',
-    password: '123',
-    role_id: 3
-  });
-});*/
+// });
+// User.sync().then(() => {
+//   User.create({
+//     email: 'andrei.seby45@yahoo.com',
+//     password: 'true',
+//     role_id: 3
+//   });
+//   User.create({
+//     email: 'test2@test.com',
+//     password: 'asd',
+//     role_id: 3
+//   });
+//   User.create({
+//     email: 'test3@test.com',
+//     password: '123',
+//     role_id: 3
+//   });
+// });
 ///////////////////////////// 
 
 // const Sport = db.sequelize.define('sport', {
