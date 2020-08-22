@@ -4,25 +4,12 @@ const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const sendMail = require("../utils/email.utils.js");
-const { clubMember } = require("../models");
-// const Op = require("sequelize");
+const moment = require("moment");
 const EventMember = db.eventMember;
 const User = db.user;
 const Op = require("sequelize").Op;
 
 exports.create = (req, res) => {
-    //Check if club exists
-    Club.findByPk(req.body.clubId)
-        .then(data => {
-            if (data == null) {
-                return res.status(404).send("Club not found.");
-            }
-        })
-        .catch(err => {
-            return res.status(500).send({
-                message: err.message
-            });
-        });
 
     //Validate date
     let date = req.body.date;
@@ -34,11 +21,11 @@ exports.create = (req, res) => {
 
     //Validate time
     let time = req.body.time;
-    if (moment(time, "LT", true).isValid() == false) {
-        return res.status(400).send({
-            message: "Invalid time."
-        });
-    }
+    // if (moment(time, "LT", true).isValid() == false) {
+    //     return res.status(400).send({
+    //         message: "Invalid time."
+    //     });
+    // }
 
     //Validate name
     let name = req.body.name.trim();
@@ -57,8 +44,8 @@ exports.create = (req, res) => {
     }
 
     //Validate location
-    let location = req.body.location.trim();
-    let locationTest = req.body.location.trim().split(',').forEach(element => Number(element));
+    let location = req.body.location;
+    let locationTest = req.body.location.split(',').map(element => Number(element));
     if (locationTest.length != 2 || locationTest.every(element => isNaN(element))) {
         return res.status(400).send({
             message: "Invalid location."
@@ -67,12 +54,21 @@ exports.create = (req, res) => {
 
     //Validate radius
     let radius = req.body.radius;
-    if (isNan(radius)) {
+    if (radius != null && isNaN(radius)) {
         return res.status(400).send({
             message: "Invalid radius."
         });
     } else if (radius == null) {
         radius = 1;
+    }
+
+
+    //Validate event_cover
+    let event_cover = req.body.event_cover;
+    if (event_cover.type != "image/png" && event_cover.type != "image/jpeg") {
+        return res.status(400).send({
+            message: "Invalid event_cover"
+        });
     }
 
     //Validate sportType
@@ -85,39 +81,31 @@ exports.create = (req, res) => {
     })
         .then(data => {
             if (data == null) {
-                return res.status(404).send({
+                res.status(404).send({
                     message: "sportType not found."
                 });
             } else {
                 sport_type_id = data.id;
+                return Club.findByPk(req.body.clubId);
             }
+        }).then(club => {
+            if (club == null) {
+                res.status(404).send("Club not found");
+            }
+            //Create event
+            const event = {
+                name: name,
+                date: date,
+                time: time,
+                description: description,
+                location: location,
+                club_id: req.body.clubId,
+                radius: radius,
+                sport_type_id: sport_type_id,
+                event_cover: event_cover.link
+            };
+            return Event.create(event);
         })
-        .catch(err => {
-            return res.status(500).send({ message: err.message });
-        });
-
-    //Validate event_cover
-    let event_cover = req.body.event_cover;
-    if (event_cover.type != "image/png" && event_cover.type != "image/jpeg") {
-        return res.status(400).send({
-            message: "Invalid event_cover"
-        });
-    }
-
-    //Create event
-    const event = {
-        name: name,
-        date: date,
-        time: time,
-        description: description,
-        location: location,
-        club_id: req.body.clubId,
-        radius: radius,
-        sport_type_id: sport_type_id,
-        event_cover: event_cover.link
-    };
-
-    Event.create(event)
         .then(data => {
             if (req.body.invite_emails != null) {
                 //Send invite emails
@@ -136,7 +124,7 @@ exports.create = (req, res) => {
             return res.status(200).send(data);
         })
         .catch(err => {
-            return res.status(500).send({ message: err.message });
+            res.status(500).send({ message: err.message });
         });
 };
 
@@ -284,6 +272,9 @@ exports.get = (req, res) => {
             }
         }).then(result => {
             const membersId = result.map(member => member.dataValues.user_id);
+            if (membersId.length == 0) {
+                return [];
+            }
             return User.findAll({
                 where: {
                     id: membersId
@@ -357,6 +348,9 @@ exports.list = (req, res) => {
                 res.dataValues.members = result.filter(event => event.dataValues.event_id === res.dataValues.id);
                 return res;
             });
+            if (membersId.length == 0) {
+                return [];
+            }
             return User.findAll({
                 where: {
                     id: membersId
@@ -379,6 +373,9 @@ exports.list = (req, res) => {
                 res.dataValues.pending = result.filter(event => event.dataValues.event_id === res.dataValues.id);
                 return res;
             });
+            if (invitesEmails.length == 0) {
+                return [];
+            }
             return User.findAll({
                 where: {
                     email: {

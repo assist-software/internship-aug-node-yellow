@@ -78,17 +78,61 @@ exports.update = (req, res) => {
 };
 
 exports.get = (req, res) => {
-  if (req.authJwt == null) {
-    return res.status(403).send({ message: "Permission denied." });
-  } else {
-    Club.findByPk(req.params.clubId)
+  // if (req.authJwt == null) {
+  //   return res.status(403).send({ message: "Permission denied." });
+  // } else {
+    const id = req.params.clubId;
+    let resClub = null;
+
+    Club.findByPk(id)
       .then(data => {
-        res.status(200).send(data);
+        if(data != null) {
+          resClub = data;
+          return ClubMember.findAll({
+            where: {
+              club_id: id
+            }
+          });
+        } else {
+          return res.status(400).send({
+            message: "Club not found."
+          });
+        }
+      }).then(result => {
+        const membersId = result.map(member => member.dataValues.user_id);
+        if(membersId.length == 0) {
+          return [];
+        }
+        return User.findAll({
+          where: {
+            id: membersId
+          }
+        });
+      }).then(clubMembers => {
+        resClub.dataValues.members = clubMembers;
+        return ClubInvite.findAll({
+          where: {
+            club_id: id
+          }
+        });
+      }).then(result => {
+        const invitesEmails = result.map(invite => invite.dataValues.email);
+        if(invitesEmails.length == 0) {
+          return [];
+        }
+        User.findAll({
+          where: {
+            email: invitesEmails
+          }
+        });
+      }).then(clubInvites => {
+        resClub.dataValues.pending = clubInvites;
+        res.status(200).send(resClub);
       })
       .catch(err => {
         res.status(500).send({ message: err.message });
       });
-  }
+  // }
 };
 
 exports.search = (req, res) => {
@@ -189,6 +233,9 @@ exports.listAll = (req, res) => {
       res.dataValues.members = result.filter(club => club.dataValues.club_id === res.dataValues.id);
       return res;
     })
+    if(membersId.length == 0) {
+      return [];
+    }
     return User.findAll({
       where: {
         id: membersId
@@ -210,7 +257,10 @@ exports.listAll = (req, res) => {
     resClub = resClub.map(res => {
       res.dataValues.pending = result.filter(club => club.dataValues.club_id === res.dataValues.id);
       return res;
-    })
+    });
+    if(invitesEmails.length == 0) {
+      return [];
+    }
     return User.findAll({
       where: {
         email: {
