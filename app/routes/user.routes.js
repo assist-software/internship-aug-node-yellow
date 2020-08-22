@@ -17,8 +17,10 @@ module.exports = app => {
     router.delete("/:userId", users.delete);
 
     router.post("/delete/all", users.deleteAll);
-    
+
     router.get("/search/byid/:id", users.searchById);
+
+    router.put("/update/coach/up", users.updateCoach);
 
     app.use('/api/user', router);
 }
