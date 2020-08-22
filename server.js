@@ -107,58 +107,34 @@ Club.sync().then(() => {
     name: 'lavie',
     owner_id: 1
   });
-});
+});*/
 ///////////////////////////////////////////
-*/
-// const Event = db.sequelize.define("event", {
-//   name: { type: db.Sequelize.STRING },
-//   date: { type: db.Sequelize.DATE },
-//   time: { type: db.Sequelize.TIME },
-//   description: { type: db.Sequelize.TEXT },
-//   location: { type: db.Sequelize.STRING },
-//   club_id: { type: db.Sequelize.INTEGER },
-//   radius: { type: db.Sequelize.INTEGER },
-//   sport_type_id:{type: db.Sequelize.INTEGER},
-//   event_cover: {type: db.Sequelize.BLOB}
-// });
+/*
+const Event = db.sequelize.define("event", {
+  name: { type: db.Sequelize.STRING },
+  date: { type: db.Sequelize.DATE },
+  time: { type: db.Sequelize.TIME },
+  description: { type: db.Sequelize.TEXT },
+  location: { type: db.Sequelize.STRING },
+  club_id: { type: db.Sequelize.INTEGER },
+  radius: { type: db.Sequelize.INTEGER },
+  sport_type_id:{type: db.Sequelize.INTEGER},
+  event_cover: {type: db.Sequelize.BLOB}
+});
 
-// Event.sync().then(()=>{
-//   Event.create({
-//     name:'First event',
-//     date:'2020-10-25',
-//     time:'00:00:00',
-//     description:'stai acasa',
-//     location:'la tine acasa',
-//     club_id:2,
-//     radius:3,
-//     sport_type_id:1,
-//     event_cover:0
-//   });
-
-//   Event.create({
-//     name:'First event',
-//     date:'2020-11-25',
-//     time:'00:00:00',
-//     description:'buona sera',
-//     location:'some coordinates',
-//     club_id:2,
-//     radius:3,
-//     sport_type_id:2,
-//     event_cover:0
-//   });
-
-//   Event.create({
-//     name:'First event',
-//     date:'2020-12-25',
-//     time:'00:00:00',
-//     description:'We are gonna run for a lil bit',
-//     location:'central park',
-//     club_id:2,
-//     radius:3,
-//     sport_type_id:3,
-//     event_cover:0
-//   });
-// });
+Event.sync().then(()=>{
+  Event.create({
+    name:'Last event',
+    date:'2019-03-25',
+    time:'00:40:00',
+    description:'acasa',
+    location:'la tine acasa',
+    club_id:4,
+    radius:3,
+    sport_type_id:1,
+    event_cover:0
+  });
+});*/
 
 /*
 const ClubInvite = db.sequelize.define("clubInvite", {
@@ -239,7 +215,7 @@ require("./app/routes/event.routes.js")(app);
 require("./app/routes/event-invite.routes.js")(app);
 require("./app/routes/workout.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
-
+require("./app/routes/sport.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

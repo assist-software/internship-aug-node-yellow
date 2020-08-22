@@ -198,6 +198,17 @@ exports.delete = (req, res) => {
       });
     });
 };
+exports.listClubsOwnerNull = (req, res) => {
+  Club.findAll({ where: { owner_id: null } })
+    .then(data => { 
+      console.log(data);
+      return res.status(200).send(data) ;})
+    .catch(err => {
+      res.status(500).send({
+        message: err.message
+      });
+    })
+};
 
 exports.listAll = (req, res) => {
   let resClub = null;
