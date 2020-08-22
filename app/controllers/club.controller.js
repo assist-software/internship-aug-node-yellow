@@ -224,6 +224,11 @@ exports.listAll = (req, res) => {
     })
     return res.status(200).send(resClub);
   })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message
+    });
+  });
 
 };
 

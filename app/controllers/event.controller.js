@@ -323,35 +323,34 @@ exports.delete = (req, res) => {
 
 exports.list = (req, res) => {
   let resEvent = null;
-  function findMembers(event) {
-    return EventMember.findAll({
-        where: {
-            event_id: event.id
-        }
-    });
-  }
-  async function getMemberData(member) {
-      const rez = await User.findByPk(member.user_id);
-      return rez.dataValues;
-  }
 
   Event.findAll()
   .then(events => {
-      resEvent = events.map(event => event.dataValues);
-      return Promise.all(resEvent.map(event => findMembers(event)));
-  })
-  .then(eventsMembers => {
-      for(let i = 0; i < resEvent.length; i++) {
-          Promise.all(eventsMembers[i].map(member => getMemberData(member)))
-          .then(membersData => {
-              resEvent[i]["members"] = membersData;
-              if(i == resEvent.length - 1) {
-                  res.status(200).send(resEvent);
-              }
-          })
-      }
-  })
-  .catch(err => {
+      resEvent = events;
+      const eventIds = resEvent.map(event => event.dataValues.id);
+      return EventMember.findAll({
+          where: {
+              event_id: eventIds
+          }
+      });
+  }).then(result => {
+      const membersId = result.map(member => member.dataValues.user_id);
+      resEvent = resEvent.map(res => {
+          res.dataValues.members = result.filter(event => event.dataValues.event_id === res.dataValues.id);
+          return res;
+      });
+      return User.findAll({
+          where: {
+              id: membersId
+          }
+      });
+  }).then(eventMembers => {
+      resEvent = resEvent.map(res => {
+          res.dataValues.members = res.dataValues.members.map(members => eventMembers.find(user => user.dataValues.id === members.dataValues.user_id));
+          return res;
+      })
+      res.status(200).send(resEvent);
+  }).catch(err => {
       res.status(500).send({
           message: err.message
       });

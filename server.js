@@ -108,32 +108,56 @@ Club.sync().then(() => {
   });
 });
 ///////////////////////////////////////////
+*/
+// const Event = db.sequelize.define("event", {
+//   name: { type: db.Sequelize.STRING },
+//   date: { type: db.Sequelize.DATE },
+//   time: { type: db.Sequelize.TIME },
+//   description: { type: db.Sequelize.TEXT },
+//   location: { type: db.Sequelize.STRING },
+//   club_id: { type: db.Sequelize.INTEGER },
+//   radius: { type: db.Sequelize.INTEGER },
+//   sport_type_id:{type: db.Sequelize.INTEGER},
+//   event_cover: {type: db.Sequelize.BLOB}
+// });
 
-const Event = db.sequelize.define("event", {
-  name: { type: db.Sequelize.STRING },
-  date: { type: db.Sequelize.DATE },
-  time: { type: db.Sequelize.TIME },
-  description: { type: db.Sequelize.TEXT },
-  location: { type: db.Sequelize.STRING },
-  club_id: { type: db.Sequelize.INTEGER },
-  radius: { type: db.Sequelize.INTEGER },
-  sport_type_id:{type: db.Sequelize.INTEGER},
-  event_cover: {type: db.Sequelize.BLOB}
-});
+// Event.sync().then(()=>{
+//   Event.create({
+//     name:'First event',
+//     date:'2020-10-25',
+//     time:'00:00:00',
+//     description:'stai acasa',
+//     location:'la tine acasa',
+//     club_id:2,
+//     radius:3,
+//     sport_type_id:1,
+//     event_cover:0
+//   });
 
-Event.sync().then(()=>{
-  Event.create({
-    name:'First event',
-    date:'2015-03-25',
-    time:'00:00:00',
-    description:'stai acasa',
-    location:'la tine acasa',
-    club_id:2,
-    radius:3,
-    sport_type_id:1,
-    event_cover:0
-  });
-});
+//   Event.create({
+//     name:'First event',
+//     date:'2020-11-25',
+//     time:'00:00:00',
+//     description:'buona sera',
+//     location:'some coordinates',
+//     club_id:2,
+//     radius:3,
+//     sport_type_id:2,
+//     event_cover:0
+//   });
+
+//   Event.create({
+//     name:'First event',
+//     date:'2020-12-25',
+//     time:'00:00:00',
+//     description:'We are gonna run for a lil bit',
+//     location:'central park',
+//     club_id:2,
+//     radius:3,
+//     sport_type_id:3,
+//     event_cover:0
+//   });
+// });
 
 /*
 const ClubInvite = db.sequelize.define("clubInvite", {
