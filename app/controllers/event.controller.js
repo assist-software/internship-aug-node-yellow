@@ -4,9 +4,10 @@ const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const sendMail = require("../utils/email.utils.js");
-const Op = require("sequelize");
+// const Op = require("sequelize");
 const EventMember = db.eventMember;
 const User = db.user;
+const Op = require("sequelize").Op;
 
 exports.create = (req, res) => {
     //Check if club exists
@@ -349,8 +350,33 @@ exports.list = (req, res) => {
           res.dataValues.members = res.dataValues.members.map(members => eventMembers.find(user => user.dataValues.id === members.dataValues.user_id));
           return res;
       })
-      res.status(200).send(resEvent);
-  }).catch(err => {
+      const eventIds = resEvent.map(event => event.dataValues.id);
+      return EventInvite.findAll({
+          where: {
+              event_id: eventIds
+          }
+      });
+  }).then(result => {
+    const invitesEmails = result.map(invite => invite.dataValues.email);
+    resEvent = resEvent.map(res => {
+        res.dataValues.pending = result.filter(event => event.dataValues.event_id === res.dataValues.id);
+        return res;
+    });
+    return User.findAll({
+        where: {
+            email: {
+                [Op.like]: {[Op.any]: invitesEmails}
+            }
+        }
+    });
+  }).then(eventInvites => {
+    resEvent = resEvent.map(res => {
+        res.dataValues.pending = res.dataValues.pending.map(invites => eventInvites.find(user => user.dataValues.email === invites.dataValues.email));
+        return res;
+    })
+    res.status(200).send(resEvent);
+  })
+  .catch(err => {
       res.status(500).send({
           message: err.message
       });

@@ -51,17 +51,18 @@ db.sequelize.sync();
 //   role_id: { type: db.Sequelize.INTEGER }
 
 // });
-// // User.sync().then(() => {
-// //   User.create({
-// //     email: 'mada_agh@yahoo.com',
-// //     password: 'true',
-// //     role_id: 3
-// //   });
+// User.sync().then(() => {
 //   User.create({
-//     email: 'mada_agh@yahoo.com',
+//     email: 'gigi@yahoo.com',
+//     password: 'true',
+//     role_id: 3
+//   });
+//   User.create({
+//     email: 'dudu@yahoo.com',
 //     password: 'asd',
 //     role_id: 3
 //   });
+// });
 //   User.create({
 //     email: 'test3@test.com',
 //     password: '123',
