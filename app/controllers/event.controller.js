@@ -4,6 +4,7 @@ const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const sendMail = require("../utils/email.utils.js");
+const { clubMember } = require("../models");
 // const Op = require("sequelize");
 const EventMember = db.eventMember;
 const User = db.user;
@@ -265,16 +266,32 @@ exports.update = (req, res) => {
 
 exports.get = (req, res) => {
     const id = req.params.eventId;
+    let resEvent = null;
     //array de membri
     Event.findByPk(id)
         .then(data => {
             if (data != null) {
-                return res.status(200).send(data);
+                resEvent = data;
+                return EventMember.findAll({
+                    where: {
+                        event_id: id
+                    }
+                });
             } else {
                 return res.status(404).send({
                     message: "Event not found."
                 });
             }
+        }).then(result => {
+            const membersId = result.map(member => member.dataValues.user_id);
+            return User.findAll({
+                where: {
+                    id: membersId
+                }
+            });
+        }).then(eventMembers => {
+            resEvent.dataValues.members = eventMembers;
+            return res.status(200).send(resEvent);
         })
         .catch(err => {
             return res.status(404).send({ message: err.message });
@@ -323,62 +340,62 @@ exports.delete = (req, res) => {
 };
 
 exports.list = (req, res) => {
-  let resEvent = null;
+    let resEvent = null;
 
-  Event.findAll()
-  .then(events => {
-      resEvent = events;
-      const eventIds = resEvent.map(event => event.dataValues.id);
-      return EventMember.findAll({
-          where: {
-              event_id: eventIds
-          }
-      });
-  }).then(result => {
-      const membersId = result.map(member => member.dataValues.user_id);
-      resEvent = resEvent.map(res => {
-          res.dataValues.members = result.filter(event => event.dataValues.event_id === res.dataValues.id);
-          return res;
-      });
-      return User.findAll({
-          where: {
-              id: membersId
-          }
-      });
-  }).then(eventMembers => {
-      resEvent = resEvent.map(res => {
-          res.dataValues.members = res.dataValues.members.map(members => eventMembers.find(user => user.dataValues.id === members.dataValues.user_id));
-          return res;
-      })
-      const eventIds = resEvent.map(event => event.dataValues.id);
-      return EventInvite.findAll({
-          where: {
-              event_id: eventIds
-          }
-      });
-  }).then(result => {
-    const invitesEmails = result.map(invite => invite.dataValues.email);
-    resEvent = resEvent.map(res => {
-        res.dataValues.pending = result.filter(event => event.dataValues.event_id === res.dataValues.id);
-        return res;
-    });
-    return User.findAll({
-        where: {
-            email: {
-                [Op.like]: {[Op.any]: invitesEmails}
-            }
-        }
-    });
-  }).then(eventInvites => {
-    resEvent = resEvent.map(res => {
-        res.dataValues.pending = res.dataValues.pending.map(invites => eventInvites.find(user => user.dataValues.email === invites.dataValues.email));
-        return res;
-    })
-    res.status(200).send(resEvent);
-  })
-  .catch(err => {
-      res.status(500).send({
-          message: err.message
-      });
-  });
+    Event.findAll()
+        .then(events => {
+            resEvent = events;
+            const eventIds = resEvent.map(event => event.dataValues.id);
+            return EventMember.findAll({
+                where: {
+                    event_id: eventIds
+                }
+            });
+        }).then(result => {
+            const membersId = result.map(member => member.dataValues.user_id);
+            resEvent = resEvent.map(res => {
+                res.dataValues.members = result.filter(event => event.dataValues.event_id === res.dataValues.id);
+                return res;
+            });
+            return User.findAll({
+                where: {
+                    id: membersId
+                }
+            });
+        }).then(eventMembers => {
+            resEvent = resEvent.map(res => {
+                res.dataValues.members = res.dataValues.members.map(members => eventMembers.find(user => user.dataValues.id === members.dataValues.user_id));
+                return res;
+            })
+            const eventIds = resEvent.map(event => event.dataValues.id);
+            return EventInvite.findAll({
+                where: {
+                    event_id: eventIds
+                }
+            });
+        }).then(result => {
+            const invitesEmails = result.map(invite => invite.dataValues.email);
+            resEvent = resEvent.map(res => {
+                res.dataValues.pending = result.filter(event => event.dataValues.event_id === res.dataValues.id);
+                return res;
+            });
+            return User.findAll({
+                where: {
+                    email: {
+                        [Op.like]: { [Op.any]: invitesEmails }
+                    }
+                }
+            });
+        }).then(eventInvites => {
+            resEvent = resEvent.map(res => {
+                res.dataValues.pending = res.dataValues.pending.map(invites => eventInvites.find(user => user.dataValues.email === invites.dataValues.email));
+                return res;
+            })
+            res.status(200).send(resEvent);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message
+            });
+        });
 };
