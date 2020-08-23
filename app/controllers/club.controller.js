@@ -1,6 +1,4 @@
 const db = require("../models");
-const userRoutes = require("../routes/user.routes");
-const { club, clubInvite } = require("../models");
 const Op = require("sequelize").Op;
 const Club = db.club;
 const ClubInvite = db.clubInvite;
@@ -29,14 +27,15 @@ exports.create = (req, res) => {
   Club.create(club)
     .then(data => {
       //Verify email and invite members
-      req.body.invite_members.forEach(email => {
+      return Promise.all(req.body.invite_members.map(email => {
         if (regex.test(email)) {
-          ClubInvite.create({
+          return ClubInvite.create({
             email: email,
             club_id: data.id
           });
         }
-      });
+      }));
+    }).then(data => {
       return res.status(200).send("Club added successfully!");
     })
     .catch(err => {
@@ -120,13 +119,17 @@ exports.get = (req, res) => {
         if(invitesEmails.length == 0) {
           return [];
         }
-        User.findAll({
+        return User.findAll({
           where: {
             email: invitesEmails
           }
         });
       }).then(clubInvites => {
         resClub.dataValues.pending = clubInvites;
+        return User.findByPk(resClub.dataValues.owner_id); 
+      }).then(owner => {
+        resClub.dataValues.ownerFirstName = owner.dataValues.first_name;
+        resClub.dataValues.ownerLastName = owner.dataValues.last_name;
         res.status(200).send(resClub);
       })
       .catch(err => {

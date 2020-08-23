@@ -29,4 +29,4 @@ function sendMail(to, subject, message) {
    });
 }
 
-exports.sendMail = sendMail;
+module.exports.sendMail = sendMail;

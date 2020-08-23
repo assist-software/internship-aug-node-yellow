@@ -3,7 +3,7 @@ const Event = db.event;
 const Club = db.club;
 const Sport = db.sport;
 const EventInvite = db.eventInvite;
-const sendMail = require("../utils/email.utils.js");
+const sendMail = require("../utils/email.utils.js").sendMail;
 const moment = require("moment");
 const EventMember = db.eventMember;
 const User = db.user;
@@ -74,6 +74,8 @@ exports.create = (req, res) => {
     //Validate sportType
     let sportType = req.body.sportType.trim();
     let sport_type_id;
+
+    let response = null;
     Sport.findOne({
         where: {
             type: sportType
@@ -107,21 +109,24 @@ exports.create = (req, res) => {
             return Event.create(event);
         })
         .then(data => {
-            if (req.body.invite_emails != null) {
+            response = data;
+            if (req.body.invite_emails.length != 0) {
                 //Send invite emails
                 sendMail(req.body.invite_emails, `Invitation to ${name} event`,
                     `You have been invited to ${name} event. You may accept or decline the invitation.`);
                 var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                req.body.invite_emails.forEach(email => {
+                return Promise.all(req.body.invite_emails.map(email => {
                     if (regex.test(email)) {
-                        EventInvite.create({
+                        return EventInvite.create({
                             email: email,
                             event_id: data.id
                         });
                     }
-                });
+                }));
             }
             return res.status(200).send(data);
+        }).then(result => {
+            return res.status(200).send(response);
         })
         .catch(err => {
             res.status(500).send({ message: err.message });
