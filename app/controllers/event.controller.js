@@ -5,8 +5,10 @@ const Sport = db.sport;
 const EventInvite = db.eventInvite;
 const sendMail = require("../utils/email.utils.js").sendMail;
 const moment = require("moment");
+const { workout } = require("../models");
 const EventMember = db.eventMember;
 const User = db.user;
+const Workout = db.workout;
 const Op = require("sequelize").Op;
 
 exports.create = (req, res) => {
@@ -287,6 +289,21 @@ exports.get = (req, res) => {
             });
         }).then(eventMembers => {
             resEvent.dataValues.members = eventMembers;
+            return Workout.findAll({
+                where: {
+                    event_id: id
+                }
+            });
+        }).then(workouts => {
+            resEvent.dataValues.members.map(member => {
+                const res = workouts.find(user => user.dataValues.user_id === member.dataValues.id);
+                if(!res) {
+                    member.dataValues.workout = [0, 0, 0, 0];
+                } else {
+                    member.dataValues.workout = [res.dataValues.hearth_rate, res.dataValues.calories, res.dataValues.avg_speed, res.dataValues.distance];
+                }
+                return member;
+            })
             return res.status(200).send(resEvent);
         })
         .catch(err => {

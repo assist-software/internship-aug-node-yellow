@@ -13,6 +13,8 @@ module.exports = app => {
 
     router.get("/list", clubs.list); //List of clubs for a coach or admin
 
+    router.get("/owner/null",clubs.listClubsOwnerNull);
+
     router.put("/:clubId", clubs.update);
 
     router.delete("/:clubId", clubs.delete);

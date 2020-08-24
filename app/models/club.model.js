@@ -25,5 +25,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull:false
         }
     });
+    Club.belongsTo(User);
     return Club;
+
 }
