@@ -42,39 +42,6 @@ exports.create = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
-  const id = req.params.clubId;
-
-  // //Nu se permite altetului sa modifice un club
-  // if (req.authJwt.role_id == 3) {
-  //   return res.status(403).send({
-  //     message: "Access denied."
-  //   });
-  //   //Nu se permite unui coach sa modifice alt club decat unul propriu
-  // } else if (req.authJwt.role_id == 2 && req.body.ownerId != req.authJwt.user_id) {
-  //   return res.status(403).send({
-  //     message: "Access denied."
-  //   });
-  // } else {
-  Club.update(req.body, { where: { id: id } })
-    .then(num => {
-      if (num == 1) {
-        return Club.findByPk(id);
-      } else {
-        return res.status(404).send({
-          message: "Club not found."
-        });
-      }
-    })
-    .then(data => {
-      res.status(200).send(data);
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
-  //}
-};
-
 exports.get = (req, res) => {
   if (req.authJwt == null) {
     return res.status(403).send({ message: "Permission denied." });
@@ -154,9 +121,10 @@ exports.delete = (req, res) => {
 };
 exports.listClubsOwnerNull = (req, res) => {
   Club.findAll({ where: { owner_id: null } })
-    .then(data => { 
+    .then(data => {
       console.log(data);
-      return res.status(200).send(data) })
+      return res.status(200).send(data)
+    })
     .catch(err => {
       res.status(500).send({
         message: err.message
@@ -178,17 +146,17 @@ exports.list = (req, res) => {
     return User.findByPk(user.user_id);
   }
   function resolveMembers(membersData) {
-    const rez = 
-    membersData.map(async(member) => {
-      const mem = await member;
-      const user = await findMember(mem);
-      // console.log(1);
-      // console.log(user.dataValues);
-      return user.dataValues;
-    });
+    const rez =
+      membersData.map(async (member) => {
+        const mem = await member;
+        const user = await findMember(mem);
+        // console.log(1);
+        // console.log(user.dataValues);
+        return user.dataValues;
+      });
     return rez;
   }
- 
+
   console.log(null);
   Club.findAll({
     where: {
@@ -213,15 +181,15 @@ exports.list = (req, res) => {
         if (membersData[i] != null) {
           // resClub[i]["members"] = 
           Promise.all(resolveMembers(membersData[i]))
-          .then(data => {
-            resClub[i]["members"] = data;
-            //console.log(2);
-          //console.log(resClub[i]["members"]);
-          if (i == resClub.length - 1) {
-            res.status(200).send(resClub);
-          }
-          });
-          
+            .then(data => {
+              resClub[i]["members"] = data;
+              //console.log(2);
+              //console.log(resClub[i]["members"]);
+              if (i == resClub.length - 1) {
+                res.status(200).send(resClub);
+              }
+            });
+
         } else {
           resClub[i]["members"] = [];
           if (i == resClub.length - 1) {
@@ -234,5 +202,28 @@ exports.list = (req, res) => {
       res.status(500).send({
         message: err.message
       });
+    });
+};
+
+//
+
+//edit clubs 
+exports.update = async(req, res) => {
+  var club_id=req.params.clubId
+  if (req.body.name === null || req.body.name.length < 2)
+    return res.status(400).send({ message: "Invalid name." });
+  await ClubInvite.create({email:req.body.email,club_id:club_id})
+  await Club.update(req.body, { where: { id: club_id } })
+    .then(num => {
+      if (num == 1) {
+        return res.status(200).send({ message: "Updated" });
+      } else {
+        return res.status(404).send({
+          message: "Club not found."
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
 };

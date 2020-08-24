@@ -44,8 +44,7 @@ exports.create = (req, res) => {
   let _age = req.body.age;
   let primary_sport_id;
   let secondary_sport_id;
-  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3))
-  {
+  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3)) {
     return res.status(400).send({ message: "Invalid first name." });
   }
   if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
@@ -119,7 +118,7 @@ exports.create = (req, res) => {
     }
   }).then(user => {
     if (user) {
-      res.status(400).send({message: "Failed! Email is already in use!"});
+      res.status(400).send({ message: "Failed! Email is already in use!" });
       return;
     }
     else {
@@ -177,7 +176,7 @@ exports.delete = (req, res) => {
         return res.status(404).send({
           message: "User not found."
         });
-      } 
+      }
     })
     .catch(err => {
       return res.status(500).send({
@@ -347,31 +346,39 @@ exports.update = (req, res) => {
 exports.updateCoach = async (req, res) => {
   const clubs = req.body.clubs;
   const id = req.body.user_id;
-  await Club.update({ owner_id: null }, { where: { owner_id: id } })
-  await Club.update({ owner_id: id }, { where: { id: clubs } })
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email
-  };
-  if (!regexPassword.test(user.email)) {
+
+  var f_name = req.body.first_name;
+  var l_name = req.body.last_name;
+  var _email = req.body.email;
+
+
+  if (!regexPassword.test(_email)) {
     return res.status(400).send({ message: "Invalid email" });
   }
   else {
-    await User.findOne({ where: { email: user.email } })
+    await User.findOne({ where: { email: _email } })
       .then(data => {
-        if (data != null && data.id != id)
-          return res.status(400).send({ message: "Email already exist." });
+        if (data != null && data.id != id) {
+          _email = null;
+        }
         return;
       })
   }
-  if (user.first_name != null && (hasNumbers(user.first_name) || user.first_name.length < 3)) {
+  if (_email === null) {
+    return res.status(400).send({ message: "Email already exist." });
+  }
+  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3)) {
     return res.status(400).send({ message: "Invalid first name." });
   }
-  if (user.last_name != null && (hasNumbers(user.last_name) || user.last_name.length < 3)) {
-    return res.status(400).send({ message: "Invalid first name." });
+  if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
+    return res.status(400).send({ message: "Invalid last name." });
   }
-  User.update(user, {
+  const user = {
+    first_name: f_name,
+    last_name: l_name,
+    email: _email
+  };
+  await User.update(user, {
     where: {
       id: id
     }
@@ -384,6 +391,10 @@ exports.updateCoach = async (req, res) => {
         res.status(404).send("User not found.")
       }
     }).catch(error => console.log(`Error in promises ${error}`))
+
+  await Club.update({ owner_id: null }, { where: { owner_id: id } })
+  await Club.update({ owner_id: id }, { where: { id: clubs } })
+
 };
 
 // delete all users with role_id=2(coach)=>owner_id (clubs)=null
@@ -410,29 +421,37 @@ exports.deleteAll = async (req, res) => {
 
 //create a coach and send his password on email
 exports.createCoach = async (req, res) => {
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: null,
-    role_id: 2
-  }
-  if (!regexPassword.test(user.email)) {
+  var f_name = req.body.first_name;
+  var l_name = req.body.last_name;
+  var _email = req.body.email;
+  andrei
+
+  if (!regexPassword.test(_email)) {
     return res.status(400).send({ message: "Invalid email" });
   }
   else {
-    await User.findOne({ where: { email: user.email } })
+    await User.findOne({ where: { email: _email } })
       .then(data => {
         if (data != null)
-          return res.status(400).send({ message: "Email already exist." });
+          _email = null;
         return;
       })
   }
-  if (user.first_name != null && (hasNumbers(user.first_name) || user.first_name.length < 3)) {
+  if (_email === null) {
+    return res.status(400).send({ message: "Email already exist." });
+  }
+  if (f_name != null && (hasNumbers(f_name) || f_name.length < 3)) {
     return res.status(400).send({ message: "Invalid first name." });
   }
-  if (user.last_name != null && (hasNumbers(user.last_name) || user.last_name.length < 3)) {
-    return res.status(400).send({ message: "Invalid first name." });
+  if (l_name != null && (hasNumbers(l_name) || l_name.length < 3)) {
+    return res.status(400).send({ message: "Invalid last name." });
+  }
+  const user = {
+    first_name: f_name,
+    last_name: l_name,
+    email: _email,
+    password: null,
+    role_id: 2
   }
   let pass = generatePassword();
   mail.sendMail(user.email, "Your password", "Dear " + user.first_name + " " + user.last_name + "," + " this is your password: " + pass);
@@ -460,6 +479,7 @@ exports.createCoach = async (req, res) => {
     .catch(err => {
       return res.status(500).send({ message: err.message });
     });
+
 }
 
 //search a user by role_id and return 
@@ -487,7 +507,11 @@ exports.search = (req, res) => {
             .then((clubs) => {
               if (clubs != null) {
                 t._clubs = clubs.map(o => {
-                  return o.name;
+                  const c = {
+                    c_id: o.id,
+                    c_name: o.name
+                  }
+                  return c;
                 });
               }
               return t;
@@ -502,6 +526,24 @@ exports.search = (req, res) => {
       return res.status(500).send({ message: err.message });
     })
 };
+
+//return all coaches
+exports.allCoaches = ((req, res) => {
+  User.findAll({ where: { role_id: 2 } })
+    .then(data => {
+      var list = data.map(o => {
+        const obj = {
+          coach_id: o.id,
+          last_name: o.last_name,
+          first_name: o.first_name
+        }
+        return obj
+      })
+      return res.status(200).send(list)
+    }).catch(err => {
+      return res.status(500).send({ message: err.message });
+    })
+})
 
 
 

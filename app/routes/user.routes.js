@@ -1,3 +1,5 @@
+const { get } = require("http");
+
 module.exports = app => {
     const users = require("../controllers/user.controller.js");
 
@@ -20,6 +22,10 @@ module.exports = app => {
     router.delete("/delete/all", users.deleteAll);
 
     router.delete("/:userId", users.delete);
+
+    //new 22.08
+
+    router.get("/all/coaches",users.allCoaches);
 
     app.use('/api/user', router);
 }
